@@ -4,6 +4,7 @@ import HomePage from './modules/HomePage/HomePage';
 import RoomsPage from './modules/RoomsPage/RoomsPage';
 import ContactsPage from './modules/ContactsPage/ContactsPage';
 import AuthPage from './modules/AuthPage/AuthPage';
+import Dashboard from './modules/Dashboard/Dashboard';
 import NotFoundPage from './modules/NotFoundPage/NotFoundPage';
 
 export const Root = () => {
@@ -16,6 +17,7 @@ export const Root = () => {
           <Route path="rooms" element={<RoomsPage />} />
           <Route path="contacts" element={<ContactsPage />} />
           <Route path="login" element={<AuthPage />} />
+          <Route path="/dashboard" element={<Dashboard />} /> {/* Новий маршрут для особистого кабінету */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

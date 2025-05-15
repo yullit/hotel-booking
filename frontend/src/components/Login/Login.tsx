@@ -1,43 +1,107 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Для перенаправлення після логіну
 
-const Login = ({ onLogin }: { onLogin: () => void }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const AuthPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("client");
+  const [isLogin, setIsLogin] = useState(true); // Стан для перемикання між формами
+  const [error, setError] = useState<string | null>(null); // Для відображення помилок
+  const [loading, setLoading] = useState(false); // Для індикації завантаження
+  const navigate = useNavigate(); // Для перенаправлення
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Реальна авторизація буде проводитися через бекенд
-    onLogin();  // Сповіщаємо батьківський компонент про успішний вхід
+
+    if (!email || !password || (isLogin === false && !username)) {
+      setError("Будь ласка, заповніть всі поля.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const endpoint = isLogin ? "login" : "register";
+    const body = isLogin
+      ? { email, password }
+      : { username, email, password, role };
+
+    try {
+      const response = await fetch(`http://localhost:5000/${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (isLogin) {
+          localStorage.setItem("token", data.token);
+          navigate("/rooms");
+        } else {
+          setError("Реєстрація успішна! Тепер ви можете увійти.");
+        }
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Невірний логін або пароль");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Помилка при підключенні до сервера");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="login-form">
-      <h2>Увійти</h2>
+    <div>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
+        {/* Відображаємо форму для реєстрації або авторизації */}
+        {!isLogin && (
           <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
-        </div>
-        <div>
-          <label htmlFor="password">Пароль:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Увійти</button>
+        )}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Зачекайте..." : isLogin ? "Увійти" : "Зареєструватися"}
+        </button>
       </form>
+
+      <p>
+        {isLogin ? (
+          <>
+            Ще не зареєстровані?{" "}
+            <button onClick={() => setIsLogin(false)}>Реєстрація</button>
+          </>
+        ) : (
+          <>
+            Вже маєте акаунт?{" "}
+            <button onClick={() => setIsLogin(true)}>Увійти</button>
+          </>
+        )}
+      </p>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };
 
-export default Login;
+export default AuthPage;
