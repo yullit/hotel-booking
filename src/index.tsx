@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import { Root } from './Root';  // Тепер ми використовуємо компонент Root
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -9,11 +8,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Root />  {/* Обгортаємо Root, щоб забезпечити роутінг */}
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// Якщо хочеш почати вимірювати ефективність у додатку, передай функцію
+// для запису результатів (наприклад: reportWebVitals(console.log))
+// або надішли на аналітичний сервер. Детальніше: https://bit.ly/CRA-vitals
 reportWebVitals();

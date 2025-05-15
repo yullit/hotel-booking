@@ -1,0 +1,11 @@
+// src/modules/RoomsPage/RoomsPage.scss
+.rooms-page {
+  padding: 20px;
+  
+  .room-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+  }
+}

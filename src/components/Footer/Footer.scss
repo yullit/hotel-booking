@@ -1,0 +1,24 @@
+// Змінні
+$footer-bg-color: #333;
+$footer-text-color: white;
+$footer-link-color: #ff7f50;
+$footer-link-hover-color: underline;
+$footer-padding: 20px;
+$footer-link-margin: 0 10px;
+
+.footer {
+  background-color: $footer-bg-color;
+  color: $footer-text-color;
+  padding: $footer-padding;
+  text-align: center;
+
+  a {
+    color: $footer-link-color;
+    text-decoration: none;
+    margin: $footer-link-margin;
+
+    &:hover {
+      text-decoration: $footer-link-hover-color;
+    }
+  }
+}
