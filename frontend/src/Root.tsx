@@ -3,8 +3,7 @@ import { App } from './App';  // Залишай так, якщо App знахо�
 import HomePage from './modules/HomePage/HomePage';  
 import RoomsPage from './modules/RoomsPage/RoomsPage';
 import ContactsPage from './modules/ContactsPage/ContactsPage';
-import LoginPage from './modules/LoginPage/LoginPage';
-import RegisterPage from './modules/RegisterPage/RegisterPage';
+import AuthPage from './modules/AuthPage/AuthPage';
 import NotFoundPage from './modules/NotFoundPage/NotFoundPage';
 
 export const Root = () => {
@@ -16,8 +15,7 @@ export const Root = () => {
           <Route path="home" element={<Navigate to="/" replace />} />
           <Route path="rooms" element={<RoomsPage />} />
           <Route path="contacts" element={<ContactsPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
+          <Route path="login" element={<AuthPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

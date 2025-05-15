@@ -17,7 +17,6 @@ const Header = () => {
           <li><Link to="/rooms">Номери</Link></li>
           <li><Link to="/contacts">Контакти</Link></li>
           <li><Link to="/login">Увійти</Link></li>
-          <li><Link to="/register">Зареєструватися</Link></li>
         </ul>
       </nav>
     </header>
