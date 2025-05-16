@@ -1,19 +1,28 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// src/pages/AuthPage.tsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext'; // Імпортуємо AuthContext
 
 const AuthPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [isLogin, setIsLogin] = useState(true); // Стан для перемикання між формами
-  const [error, setError] = useState<string | null>(null); // Для відображення помилок
-  const [loading, setLoading] = useState(false); // Для індикації завантаження
-  const navigate = useNavigate(); // Для перенаправлення
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    throw new Error('AuthContext is not available');
+  }
+
+  const { login } = authContext;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password || (isLogin === false && !username)) {
+    if (!email || !password) {
       setError("Будь ласка, заповніть всі поля.");
       return;
     }
@@ -21,42 +30,31 @@ const AuthPage = () => {
     setLoading(true);
     setError(null);
 
-    const endpoint = isLogin ? "login" : "register";
-    const body = isLogin
-      ? { email, password }
-      : { username, email, password }; // Видалили setRole
+    const endpoint = isLogin ? 'login' : 'register';
+    const body = { email, password };
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
 
       if (response.ok) {
         const data = await response.json();
         if (isLogin) {
-          localStorage.setItem("token", data.token);
-
-          // Перевірка ролі після логіну
-          const decodedToken = JSON.parse(atob(data.token.split(".")[1])); // Декодуємо JWT токен
-          if (decodedToken.role === "manager") {
-            navigate("/manage-rooms"); // Перенаправлення на ManageRoomsPage для менеджера
-          } else {
-            navigate("/rooms"); // Перенаправлення на RoomsPage для звичайного користувача
-          }
+          login(data.token); // Використовуємо метод з контексту для збереження токену
+          navigate('/rooms'); // Перенаправляємо на сторінку номери
         } else {
           setError("Реєстрація успішна! Тепер ви можете увійти.");
         }
       } else {
         const errorData = await response.json();
-        setError(errorData.message || "Невірний логін або пароль");
+        setError(errorData.message || 'Невірний логін або пароль');
       }
     } catch (err) {
       console.error(err);
-      setError("Помилка при підключенні до сервера");
+      setError('Помилка при підключенні до сервера');
     } finally {
       setLoading(false);
     }
@@ -65,14 +63,6 @@ const AuthPage = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        {!isLogin && (
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        )}
         <input
           type="email"
           placeholder="Email"

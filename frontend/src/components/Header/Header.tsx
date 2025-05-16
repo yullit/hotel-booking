@@ -1,23 +1,29 @@
 // src/components/Header.tsx
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./Header.scss";
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';  // Імпортуємо AuthContext
+import './Header.scss';
 
 const Header = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const authContext = useContext(AuthContext);
 
-  // Функція для виходу
+  if (!authContext) {
+    throw new Error('AuthContext is not available');
+  }
+
+  const { token, logout } = authContext;
+
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Видаляємо токен при виході
-    navigate("/login"); // Перенаправляємо на сторінку логіну
+    logout();
+    navigate('/login');
   };
 
   return (
     <header className="header">
       <div className="logo">
         <Link to="/" className="logo-link">
-          <h1>Готель "Хуйня"</h1> {/* або тут можна вставити логотип */}
+          <h1>Готель "Хуйня"</h1>
         </Link>
       </div>
       <nav>

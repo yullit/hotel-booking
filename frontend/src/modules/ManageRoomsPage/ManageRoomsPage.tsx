@@ -124,6 +124,13 @@ const ManageRoomsPage = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // Перевірка для полів, де ми хочемо лише цифри
+    if (name === "capacity" || name === "price") {
+      // Дозволяємо вводити лише цифри
+      if (!/^\d*$/.test(value)) return;
+    }
+
     if (formState) {
       setFormState({ ...formState, [name]: value });
     }
@@ -135,46 +142,72 @@ const ManageRoomsPage = () => {
       {error && <div className="error">{error}</div>}
 
       <form onSubmit={handleFormSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={formState?.name || ""}
-          onChange={handleInputChange}
-          placeholder="Назва номера"
-        />
-        <input
-          type="text"
-          name="description"
-          value={formState?.description || ""}
-          onChange={handleInputChange}
-          placeholder="Опис номера"
-        />
-        <input
-          type="number"
-          name="capacity"
-          value={formState?.capacity || ""}
-          onChange={handleInputChange}
-          placeholder="Місткість"
-        />
-        <input
-          type="number"
-          name="price"
-          value={formState?.price || ""}
-          onChange={handleInputChange}
-          placeholder="Ціна"
-        />
-        <input
-          type="date"
-          name="available_from"
-          value={formState?.available_from || ""}
-          onChange={handleInputChange}
-        />
-        <input
-          type="date"
-          name="available_to"
-          value={formState?.available_to || ""}
-          onChange={handleInputChange}
-        />
+        <div className="form-group">
+          <label htmlFor="name">Назва номера:</label>
+          <input
+            type="text"
+            name="name"
+            value={formState?.name || ""}
+            onChange={handleInputChange}
+            id="name"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="description">Опис номера:</label>
+          <input
+            type="text"
+            name="description"
+            value={formState?.description || ""}
+            onChange={handleInputChange}
+            id="description"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="capacity">Місткість:</label>
+          <input
+            type="text"
+            name="capacity"
+            value={formState?.capacity || ""}
+            onChange={handleInputChange}
+            id="capacity"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="price">Ціна:</label>
+          <input
+            type="text"
+            name="price"
+            value={formState?.price || ""}
+            onChange={handleInputChange}
+            id="price"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="available_from">Доступний з:</label>
+          <input
+            type="date"
+            name="available_from"
+            value={formState?.available_from || ""}
+            onChange={handleInputChange}
+            id="available_from"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="available_to">Доступний до:</label>
+          <input
+            type="date"
+            name="available_to"
+            value={formState?.available_to || ""}
+            onChange={handleInputChange}
+            id="available_to"
+          />
+        </div>
+
         <button type="submit">{formState?.id ? "Зберегти зміни" : "Додати номер"}</button>
       </form>
 

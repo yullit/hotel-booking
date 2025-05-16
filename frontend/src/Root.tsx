@@ -17,16 +17,15 @@ export const Root = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<App />}>
+        <Route path="/" element={<App />} >
           <Route index element={<HomePage />} />
           <Route path="home" element={<Navigate to="/" replace />} />
           <Route path="rooms" element={<RoomsPage />} />
-          <Route path="manage-rooms" element={<ManageRoomsPage />} /> {/* це для списку */}
-          <Route path="manage-rooms/:roomId" element={<ManageRoomsPage />} /> {/* Це для редагування номера */}
+          <Route path="manage-rooms" element={<ManageRoomsPage />} /> 
+          <Route path="manage-rooms/:roomId" element={<ManageRoomsPage />} />
           <Route path="contacts" element={<ContactsPage />} />
           <Route path="login" element={<AuthPage />} />
-          <Route path="dashboard" element={<Dashboard />} />{" "}
-          {/* Новий маршрут для особистого кабінету */}
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
