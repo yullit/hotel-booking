@@ -5,7 +5,6 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [role, setRole] = useState("client");
   const [isLogin, setIsLogin] = useState(true); // Стан для перемикання між формами
   const [error, setError] = useState<string | null>(null); // Для відображення помилок
   const [loading, setLoading] = useState(false); // Для індикації завантаження
@@ -25,7 +24,7 @@ const AuthPage = () => {
     const endpoint = isLogin ? "login" : "register";
     const body = isLogin
       ? { email, password }
-      : { username, email, password, role };
+      : { username, email, password, role: "client" }; // Тут роль за замовчуванням, для нових користувачів
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {
@@ -40,7 +39,14 @@ const AuthPage = () => {
         const data = await response.json();
         if (isLogin) {
           localStorage.setItem("token", data.token);
-          navigate("/rooms");
+
+          // Перевірка ролі після логіну
+          const decodedToken = JSON.parse(atob(data.token.split(".")[1])); // Декодуємо JWT токен
+          if (decodedToken.role === "manager") {
+            navigate("/manage-rooms"); // Перенаправлення на ManageRoomsPage для менеджера
+          } else {
+            navigate("/rooms"); // Перенаправлення на RoomsPage для звичайного користувача
+          }
         } else {
           setError("Реєстрація успішна! Тепер ви можете увійти.");
         }

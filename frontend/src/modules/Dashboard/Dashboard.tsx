@@ -68,6 +68,12 @@ const Dashboard = () => {
   return (
     <div>
       <h1>Особистий кабінет</h1>
+      {userData && (
+        <div>
+          <p>Ім'я: {userData.username}</p>
+          <p>Email: {userData.email}</p>
+        </div>
+      )}
       {error && <p style={{ color: "red" }}>{error}</p>}
       <h2>Ваші бронювання</h2>
       <ul>

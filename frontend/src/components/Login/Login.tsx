@@ -5,7 +5,6 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [role, setRole] = useState("client");
   const [isLogin, setIsLogin] = useState(true); // Стан для перемикання між формами
   const [error, setError] = useState<string | null>(null); // Для відображення помилок
   const [loading, setLoading] = useState(false); // Для індикації завантаження
@@ -25,7 +24,7 @@ const AuthPage = () => {
     const endpoint = isLogin ? "login" : "register";
     const body = isLogin
       ? { email, password }
-      : { username, email, password, role };
+      : { username, email, password }; // Видалили setRole
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {
