@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Room } from "../../types/Room"; // Імпортуємо тип Room
+import { useNavigate, useParams } from "react-router-dom";
+import axios, { AxiosResponse, AxiosError } from "axios"; // Додаємо типи для axios
+import { Room } from "../../types/Room"; // Тип для номера
 
 const ManageRoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [error, setError] = useState("");
+  const [formState, setFormState] = useState<Room | null>(null); // Для форми додавання/редагування
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+  const { roomId } = useParams<{ roomId?: string }>(); // Отримуємо параметр roomId з URL
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -19,39 +22,168 @@ const ManageRoomsPage = () => {
       navigate("/rooms"); // Якщо не менеджер, перенаправляємо на сторінку з номерами
     }
 
-    fetch("http://localhost:5000/rooms", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => setRooms(data))
-      .catch((err) => setError("Помилка при отриманні даних"));
-  }, [navigate]);
+    // Якщо roomId є, то ми редагуємо існуючий номер
+    if (roomId) {
+      axios
+        .get(`http://localhost:5000/rooms/${roomId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response: AxiosResponse<Room>) => { // Типізуємо response
+          setFormState(response.data); // Завантажуємо номер для редагування
+        })
+        .catch((error: AxiosError) => { // Типізуємо error
+          setError("Не вдалося завантажити номер для редагування");
+          console.error(error);
+        });
+    } else {
+      // Якщо roomId немає, це для додавання нового номера
+      setFormState({
+        id: 0,
+        name: "",
+        description: "",
+        capacity: 1,
+        price: 0,
+        available_from: "",
+        available_to: "",
+      });
+    }
 
-  const handleDelete = (roomId: number) => {
+    // Отримання всіх номерів для перегляду
+    axios
+      .get("http://localhost:5000/rooms", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response: AxiosResponse<Room[]>) => { // Типізуємо response
+        setRooms(response.data);
+      })
+      .catch((error: AxiosError) => { // Типізуємо error
+        setError("Не вдалося завантажити номери");
+        console.error(error);
+      });
+  }, [navigate, roomId]);
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const token = localStorage.getItem("token");
-    fetch(`http://localhost:5000/rooms/${roomId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then(() => setRooms(rooms.filter((room) => room.id !== roomId))) 
-      .catch((err) => setError("Помилка при видаленні номера"));
+
+    if (!formState || !token) return;
+
+    try {
+      const { id, name, description, capacity, price, available_from, available_to } = formState;
+      let response: AxiosResponse<Room>;
+
+      if (id && id !== 0) {
+        // Якщо є id, редагуємо номер
+        response = await axios.put(
+          `http://localhost:5000/rooms/${id}`,
+          { name, description, capacity, price, available_from, available_to },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        // Оновлюємо відповідний номер у списку
+        setRooms((prevRooms) =>
+          prevRooms.map((room) =>
+            room.id === id ? { ...room, ...response.data } : room
+          )
+        );
+      } else {
+        // Якщо id немає, додаємо новий номер
+        response = await axios.post(
+          "http://localhost:5000/rooms",
+          { name, description, capacity, price, available_from, available_to },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setRooms([...rooms, response.data]);
+      }
+      
+      // Очищаємо форму після збереження
+      setFormState(null);
+    } catch (error) {
+      setError("Не вдалося зберегти зміни");
+      console.error(error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/rooms/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setRooms(rooms.filter((room) => room.id !== id));
+    } catch (error) {
+      setError("Не вдалося видалити номер");
+      console.error(error);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (formState) {
+      setFormState({ ...formState, [name]: value });
+    }
   };
 
   return (
     <div>
-      <h2>Управління номерами</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <h1>{roomId ? "Редагувати номер" : "Додати новий номер"}</h1>
+      {error && <div className="error">{error}</div>}
+
+      <form onSubmit={handleFormSubmit}>
+        <input
+          type="text"
+          name="name"
+          value={formState?.name || ""}
+          onChange={handleInputChange}
+          placeholder="Назва номера"
+        />
+        <input
+          type="text"
+          name="description"
+          value={formState?.description || ""}
+          onChange={handleInputChange}
+          placeholder="Опис номера"
+        />
+        <input
+          type="number"
+          name="capacity"
+          value={formState?.capacity || ""}
+          onChange={handleInputChange}
+          placeholder="Місткість"
+        />
+        <input
+          type="number"
+          name="price"
+          value={formState?.price || ""}
+          onChange={handleInputChange}
+          placeholder="Ціна"
+        />
+        <input
+          type="date"
+          name="available_from"
+          value={formState?.available_from || ""}
+          onChange={handleInputChange}
+        />
+        <input
+          type="date"
+          name="available_to"
+          value={formState?.available_to || ""}
+          onChange={handleInputChange}
+        />
+        <button type="submit">{formState?.id ? "Зберегти зміни" : "Додати номер"}</button>
+      </form>
+
+      <h2>Список доступних номерів</h2>
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>
-            <p>
-              {room.name} - {room.price} грн/день
-            </p>
+            {room.name} - {room.price} грн
+            <button onClick={() => setFormState(room)}>Редагувати</button>
             <button onClick={() => handleDelete(room.id)}>Видалити</button>
           </li>
         ))}

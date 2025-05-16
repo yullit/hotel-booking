@@ -21,7 +21,8 @@ export const Root = () => {
           <Route index element={<HomePage />} />
           <Route path="home" element={<Navigate to="/" replace />} />
           <Route path="rooms" element={<RoomsPage />} />
-          <Route path="manage-rooms" element={<ManageRoomsPage />} />
+          <Route path="manage-rooms" element={<ManageRoomsPage />} /> {/* це для списку */}
+          <Route path="manage-rooms/:roomId" element={<ManageRoomsPage />} /> {/* Це для редагування номера */}
           <Route path="contacts" element={<ContactsPage />} />
           <Route path="login" element={<AuthPage />} />
           <Route path="dashboard" element={<Dashboard />} />{" "}
