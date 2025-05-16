@@ -32,7 +32,7 @@ const Dashboard = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/user/bookings/${bookingId}`,
+        `http://localhost:5000/user/bookings/${bookingId}`, // Перевірте правильність URL
         {
           method: "DELETE",
           headers: {
@@ -44,7 +44,8 @@ const Dashboard = () => {
       if (response.ok) {
         setBookings(bookings.filter((booking) => booking.id !== bookingId));
       } else {
-        setError("Не вдалося скасувати бронювання");
+        const errorData = await response.json();
+        setError(errorData.message || "Не вдалося скасувати бронювання");
       }
     } catch (err) {
       setError("Помилка при скасуванні бронювання");
