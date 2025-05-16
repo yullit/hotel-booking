@@ -1,4 +1,3 @@
-// src/pages/AuthPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -42,11 +41,15 @@ const AuthPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        if (isLogin) {
-          login(data.token); // Використовуємо метод з контексту для збереження токену
-          navigate('/rooms'); // Перенаправляємо на сторінку номери
+        login(data.token); // Використовуємо метод з контексту для збереження токену
+
+        // Декодуємо токен і перевіряємо роль
+        const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
+
+        if (decodedToken.role === "manager") {
+          navigate("/manage-rooms"); // Перенаправляємо на сторінку для менеджера
         } else {
-          setError("Реєстрація успішна! Тепер ви можете увійти.");
+          navigate("/rooms"); // Перенаправляємо на сторінку для звичайного користувача
         }
       } else {
         const errorData = await response.json();
