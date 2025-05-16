@@ -19,6 +19,10 @@ const Header = () => {
     navigate('/login');
   };
 
+  // Перевірка ролі, чи є менеджер
+  const decodedToken = token ? JSON.parse(atob(token.split(".")[1])) : null;
+  const isManager = decodedToken && decodedToken.role === "manager";
+
   return (
     <header className="header">
       <div className="logo">
@@ -32,7 +36,11 @@ const Header = () => {
           <li><Link to="/contacts">Контакти</Link></li>
           {token ? (
             <>
-              <li><Link to="/dashboard">Особистий кабінет</Link></li>
+              {isManager ? (
+                <li><Link to="/manage-rooms">Управління номерами</Link></li>
+              ) : (
+                <li><Link to="/dashboard">Особистий кабінет</Link></li>
+              )}
               <li>
                 <button onClick={handleLogout} className="logout-button">Вийти</button>
               </li>
