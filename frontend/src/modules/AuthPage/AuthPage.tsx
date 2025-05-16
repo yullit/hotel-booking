@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Для перенаправлення після логіну
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +24,7 @@ const AuthPage = () => {
     const endpoint = isLogin ? "login" : "register";
     const body = isLogin
       ? { email, password }
-      : { username, email, password, role: "client" }; // Тут роль за замовчуванням, для нових користувачів
+      : { username, email, password }; // Видалили setRole
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {
@@ -65,7 +65,6 @@ const AuthPage = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        {/* Відображаємо форму для реєстрації або авторизації */}
         {!isLogin && (
           <input
             type="text"

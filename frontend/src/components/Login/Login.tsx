@@ -24,7 +24,7 @@ const AuthPage = () => {
     const endpoint = isLogin ? "login" : "register";
     const body = isLogin
       ? { email, password }
-      : { username, email, password }; // Видалили setRole
+      : { username, email, password, role: "client" }; // Роль за замовчуванням "client"
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {

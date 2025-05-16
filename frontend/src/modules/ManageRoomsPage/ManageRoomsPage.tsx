@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Room } from "../../types/Room"; // Імпортуємо тип Room
 
 const ManageRoomsPage = () => {
-  const [rooms, setRooms] = useState<Room[]>([]); // Тип для rooms
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -19,7 +19,6 @@ const ManageRoomsPage = () => {
       navigate("/rooms"); // Якщо не менеджер, перенаправляємо на сторінку з номерами
     }
 
-    // Fetch rooms data
     fetch("http://localhost:5000/rooms", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -39,7 +38,7 @@ const ManageRoomsPage = () => {
       },
     })
       .then((response) => response.json())
-      .then(() => setRooms(rooms.filter((room) => room.id !== roomId))) // Застосовуємо тип Room[]
+      .then(() => setRooms(rooms.filter((room) => room.id !== roomId))) 
       .catch((err) => setError("Помилка при видаленні номера"));
   };
 
