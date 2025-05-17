@@ -348,6 +348,28 @@ app.get("/user", async (req, res) => {
   }
 });
 
+
+app.post("/check-availability", async (req, res) => {
+  const { roomId, checkIn, checkOut } = req.body;
+
+  try {
+    const result = await client.query(
+      "SELECT * FROM bookings WHERE room_id = $1 AND ((check_in BETWEEN $2 AND $3) OR (check_out BETWEEN $2 AND $3))",
+      [roomId, checkIn, checkOut]
+    );
+
+    if (result.rows.length > 0) {
+      return res.json({ available: false });
+    }
+
+    return res.json({ available: true });
+  } catch (err) {
+    console.error("Помилка при перевірці доступності:", err);
+    res.status(500).send({ message: "Помилка при перевірці доступності" });
+  }
+});
+
+
 // Запуск сервера
 app.listen(5000, () => {
   console.log("Сервер працює на порту 5000");

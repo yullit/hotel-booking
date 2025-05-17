@@ -23,8 +23,8 @@ const RoomsPage = () => {
         {rooms.map((room) => (
           <li key={room.id}>
             <p>{room.name} - {room.price} грн/день</p>
-            <Link to={`/book/${room.id}`}>
-              <button>Забронювати</button>
+            <Link to={`/rooms/${room.id}`}>
+              <button>Переглянути номер</button>
             </Link>
           </li>
         ))}

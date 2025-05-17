@@ -8,6 +8,7 @@ import Dashboard from "./modules/Dashboard/Dashboard";
 import NotFoundPage from "./modules/NotFoundPage/NotFoundPage";
 import ManageRoomsPage from "./modules/ManageRoomsPage/ManageRoomsPage";
 import BookingPage from "./modules/BookingPage/BookingPage"; // Імпортуємо BookingPage
+import RoomDetailsPage from "./modules/RoomDetailsPage/RoomDetailsPage";
 
 export const Root = () => {
   return (
@@ -17,6 +18,7 @@ export const Root = () => {
           <Route index element={<HomePage />} />
           <Route path="home" element={<Navigate to="/" replace />} />
           <Route path="rooms" element={<RoomsPage />} />
+          <Route path="rooms/:id" element={<RoomDetailsPage />} /> {/* Новий маршрут */}
           <Route path="book/:id" element={<BookingPage />} />  {/* Додаємо маршрут для бронювання */}
           <Route path="manage-rooms" element={<ManageRoomsPage />} />
           <Route path="manage-rooms/:roomId" element={<ManageRoomsPage />} />
