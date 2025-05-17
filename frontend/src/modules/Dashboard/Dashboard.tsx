@@ -87,7 +87,7 @@ const Dashboard = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {user ? (
-        <h2>Вітаємо, {user.first_name} {user.last_name}</h2>
+        <h1>Вітаємо, {user.first_name} {user.last_name}</h1>
       ) : (
         <p>Завантаження...</p>
       )}

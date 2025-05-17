@@ -6,7 +6,10 @@ import { Room } from "../../types/Room"; // Тип для номера
 const ManageRoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [formState, setFormState] = useState<Room | null>(null); // Для форми додавання/редагування
-  const [user, setUser] = useState<{ first_name: string; last_name: string } | null>(null); // Для імені та прізвища менеджера
+  const [user, setUser] = useState<{
+    first_name: string;
+    last_name: string;
+  } | null>(null); // Для імені та прізвища менеджера
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const { roomId } = useParams<{ roomId?: string }>(); // Отримуємо параметр roomId з URL
@@ -42,10 +45,12 @@ const ManageRoomsPage = () => {
         .get(`http://localhost:5000/rooms/${roomId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-        .then((response: AxiosResponse<Room>) => { // Типізуємо response
+        .then((response: AxiosResponse<Room>) => {
+          // Типізуємо response
           setFormState(response.data); // Завантажуємо номер для редагування
         })
-        .catch((error: AxiosError) => { // Типізуємо error
+        .catch((error: AxiosError) => {
+          // Типізуємо error
           setError("Не вдалося завантажити номер для редагування");
           console.error(error);
         });
@@ -67,10 +72,12 @@ const ManageRoomsPage = () => {
       .get("http://localhost:5000/rooms", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((response: AxiosResponse<Room[]>) => { // Типізуємо response
+      .then((response: AxiosResponse<Room[]>) => {
+        // Типізуємо response
         setRooms(response.data);
       })
-      .catch((error: AxiosError) => { // Типізуємо error
+      .catch((error: AxiosError) => {
+        // Типізуємо error
         setError("Не вдалося завантажити номери");
         console.error(error);
       });
@@ -83,7 +90,15 @@ const ManageRoomsPage = () => {
     if (!formState || !token) return;
 
     try {
-      const { id, name, description, capacity, price, available_from, available_to } = formState;
+      const {
+        id,
+        name,
+        description,
+        capacity,
+        price,
+        available_from,
+        available_to,
+      } = formState;
       let response: AxiosResponse<Room>;
 
       if (id && id !== 0) {
@@ -110,7 +125,7 @@ const ManageRoomsPage = () => {
 
         setRooms([...rooms, response.data]);
       }
-      
+
       // Очищаємо форму після збереження
       setFormState(null);
     } catch (error) {
@@ -152,14 +167,21 @@ const ManageRoomsPage = () => {
 
   return (
     <div>
-      <h1>{roomId ? "Редагувати номер" : "Додати новий номер"}</h1>
-      {error && <div className="error">{error}</div>}
-
       {user ? (
-        <h2>Вітаємо, {user.first_name} {user.last_name}!</h2> // Вітання для менеджера
+        <h1>
+          Вітаємо, {user.first_name} {user.last_name}!
+        </h1> // Вітання для менеджера
       ) : (
         <p>Завантаження...</p>
       )}
+
+      {roomId ? (
+        <h1>Редагувати номер</h1>
+      ) : (
+        <h2>Ви можете керувати номерами готелю:</h2> // Назва сторінки замість "Додати новий номер"
+      )}
+
+      {error && <div className="error">{error}</div>}
 
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">
@@ -228,14 +250,33 @@ const ManageRoomsPage = () => {
           />
         </div>
 
-        <button type="submit">{formState?.id ? "Зберегти зміни" : "Додати номер"}</button>
+        <button type="submit">
+          {formState?.id ? "Зберегти зміни" : "Додати номер"}
+        </button>
       </form>
 
-      <h2>Список доступних номерів</h2>
+      <h3>Доступні номери:</h3>
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>
-            {room.name} - {room.price} грн
+            <p>
+              <strong>Назва:</strong> {room.name}
+            </p>
+            <p>
+              <strong>Ціна:</strong> {room.price} грн
+            </p>
+            <p>
+              <strong>Місткість:</strong> {room.capacity}
+            </p>
+            <p>
+              <strong>Опис:</strong> {room.description}
+            </p>
+            <p>
+              <strong>Доступний з:</strong> {room.available_from}
+            </p>
+            <p>
+              <strong>Доступний до:</strong> {room.available_to}
+            </p>
             <button onClick={() => setFormState(room)}>Редагувати</button>
             <button onClick={() => handleDelete(room.id)}>Видалити</button>
           </li>
