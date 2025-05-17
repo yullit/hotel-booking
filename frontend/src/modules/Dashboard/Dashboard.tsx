@@ -3,40 +3,56 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [bookings, setBookings] = useState<any[]>([]);
+  const [user, setUser] = useState<{ first_name: string; last_name: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    navigate("/login");
-    return;
-  }
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
-  const decodedToken = JSON.parse(atob(token.split(".")[1])); // Декодуємо токен
-  if (decodedToken.role === "manager") {
-    navigate("/manage-rooms"); // Перенаправляємо на сторінку для менеджера
-  }
+    const decodedToken = JSON.parse(atob(token.split(".")[1])); // Декодуємо токен
+    if (decodedToken.role === "manager") {
+      navigate("/manage-rooms"); // Перенаправляємо на сторінку для менеджера
+    }
 
-  fetch("http://localhost:5000/user/bookings", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (Array.isArray(data)) {
-        setBookings(data); // Якщо відповідь є масивом
-      } else {
-        setError("Невірний формат даних");  // Якщо дані мають неправильний формат
-      }
+    // Отримуємо дані користувача
+    fetch("http://localhost:5000/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .catch((err) => {
-      setError("Помилка при отриманні бронювань");
-      console.error(err);
-    });
-}, [navigate]);
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("User data:", data); // Додано для перевірки
+        setUser(data); // Зберігаємо ім'я та прізвище користувача
+      })
+      .catch((err) => {
+        setError("Помилка при отриманні даних користувача");
+        console.error(err);
+      });
 
+    fetch("http://localhost:5000/user/bookings", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setBookings(data); // Якщо відповідь є масивом
+        } else {
+          setError("Невірний формат даних");
+        }
+      })
+      .catch((err) => {
+        setError("Помилка при отриманні бронювань");
+        console.error(err);
+      });
+  }, [navigate]);
 
   const handleCancelBooking = async (bookingId: string) => {
     const token = localStorage.getItem("token");
@@ -44,7 +60,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/user/bookings/${bookingId}`, // Перевірте правильність URL
+        `http://localhost:5000/user/bookings/${bookingId}`,
         {
           method: "DELETE",
           headers: {
@@ -69,6 +85,13 @@ useEffect(() => {
     <div>
       <h1>Особистий кабінет</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {user ? (
+        <h2>Вітаємо, {user.first_name} {user.last_name}</h2>
+      ) : (
+        <p>Завантаження...</p>
+      )}
+
       <h2>Ваші бронювання</h2>
       <ul>
         {Array.isArray(bookings) ? (

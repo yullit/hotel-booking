@@ -49,7 +49,7 @@ const verifyRole = (role) => {
 
 // Реєстрація користувача
 app.post("/register", async (req, res) => {
-  const { username, email, password, role = "client" } = req.body; // Роль за замовчуванням - 'client'
+  const { username, email, password, firstName, lastName, role = "client" } = req.body; // Роль за замовчуванням - 'client'
 
   try {
     // Перевірка, чи існує користувач з таким ім'ям або email
@@ -67,8 +67,8 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10); // Хешуємо пароль
 
     const result = await client.query(
-      "INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *",
-      [username, email, hashedPassword, role] // Передаємо роль
+      "INSERT INTO users (username, email, password, first_name, last_name, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [username, email, hashedPassword, firstName, lastName, role] // Додаємо ім'я та прізвище
     );
 
     const newUser = result.rows[0];
@@ -87,6 +87,7 @@ app.post("/register", async (req, res) => {
     res.status(500).send("Помилка при реєстрації");
   }
 });
+
 
 // Авторизація користувача (логін)
 app.post("/login", async (req, res) => {
@@ -287,6 +288,7 @@ app.delete("/rooms/:id", verifyRole("manager"), async (req, res) => {
   }
 });
 
+//Оплата
 app.post("/create-payment-intent", async (req, res) => {
   const { amount } = req.body; // amount - це сума, яку користувач має заплатити
 
@@ -310,6 +312,39 @@ app.post("/create-payment-intent", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Помилка при створенні Payment Intent" });
+  }
+});
+
+
+
+
+// Отримання даних користувача (ім'я та прізвище)
+app.get("/user", async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).send({ message: "Токен не надано" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, "secretkey");
+    const userId = decoded.userId;
+
+    const result = await client.query(
+      "SELECT first_name, last_name FROM users WHERE id = $1",
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).send({ message: "Користувача не знайдено" });
+    }
+
+    const user = result.rows[0];
+    console.log("User data:", user); // Додаємо лог для перевірки
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Помилка при отриманні даних користувача" });
   }
 });
 

@@ -6,6 +6,7 @@ import { Room } from "../../types/Room"; // Тип для номера
 const ManageRoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [formState, setFormState] = useState<Room | null>(null); // Для форми додавання/редагування
+  const [user, setUser] = useState<{ first_name: string; last_name: string } | null>(null); // Для імені та прізвища менеджера
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const { roomId } = useParams<{ roomId?: string }>(); // Отримуємо параметр roomId з URL
@@ -21,6 +22,19 @@ const ManageRoomsPage = () => {
     if (decodedToken.role !== "manager") {
       navigate("/rooms"); // Якщо не менеджер, перенаправляємо на сторінку з номерами
     }
+
+    // Отримуємо дані менеджера (ім'я та прізвище)
+    axios
+      .get("http://localhost:5000/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response: AxiosResponse) => {
+        setUser(response.data); // Зберігаємо ім'я та прізвище менеджера
+      })
+      .catch((error: AxiosError) => {
+        setError("Помилка при отриманні даних користувача");
+        console.error(error);
+      });
 
     // Якщо roomId є, то ми редагуємо існуючий номер
     if (roomId) {
@@ -140,6 +154,12 @@ const ManageRoomsPage = () => {
     <div>
       <h1>{roomId ? "Редагувати номер" : "Додати новий номер"}</h1>
       {error && <div className="error">{error}</div>}
+
+      {user ? (
+        <h2>Вітаємо, {user.first_name} {user.last_name}!</h2> // Вітання для менеджера
+      ) : (
+        <p>Завантаження...</p>
+      )}
 
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">

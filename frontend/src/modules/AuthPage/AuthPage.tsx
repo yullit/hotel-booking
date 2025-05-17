@@ -7,6 +7,8 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState(""); // Для реєстрації
+  const [firstName, setFirstName] = useState(""); // Ім'я
+  const [lastName, setLastName] = useState(""); // Прізвище
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,10 +20,11 @@ const AuthPage = () => {
   }
 
   const { login } = authContext;
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password || (!isLogin && !username)) {
+    if (!email || !password || (!isLogin && !username) || (!isLogin && !firstName) || (!isLogin && !lastName)) {
       setError("Будь ласка, заповніть всі поля.");
       return;
     }
@@ -30,7 +33,7 @@ const AuthPage = () => {
     setError(null);
 
     const endpoint = isLogin ? "login" : "register";
-    const body = { email, password, ...(isLogin ? {} : { username }) }; // Додаємо username при реєстрації
+    const body = { email, password, firstName, lastName, ...(isLogin ? {} : { username }) }; // Додаємо поля firstName і lastName при реєстрації
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {
@@ -40,23 +43,21 @@ const AuthPage = () => {
       });
 
       if (!response.ok) {
-        // Якщо відповідь не успішна, читаємо текст помилки з JSON
         const errorData = await response.json();
         setError(errorData.message || "Невірний логін або пароль");
         return;
       }
 
       const data = await response.json();
-      login(data.token); // Використовуємо метод з контексту для збереження токену
+      login(data.token);
 
       if (data.token) {
-        // Перевірка, чи є токен
-        const decodedToken = JSON.parse(atob(data.token.split(".")[1])); // Декодуємо токен
-
+        const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
+        
         if (decodedToken.role === "manager") {
-          navigate("/manage-rooms"); // Перенаправляємо на сторінку для менеджера
+          navigate("/manage-rooms");
         } else {
-          navigate("/rooms"); // Перенаправляємо на сторінку для звичайного користувача
+          navigate("/rooms");
         }
       } else {
         setError("Токен не отримано");
@@ -85,12 +86,26 @@ const AuthPage = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         {!isLogin && (
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)} // Додаємо поле для username
-          />
+          <>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </>
         )}
         <button type="submit" disabled={loading}>
           {loading ? "Зачекайте..." : isLogin ? "Увійти" : "Зареєструватися"}
