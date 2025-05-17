@@ -165,6 +165,12 @@ const ManageRoomsPage = () => {
     }
   };
 
+  // Функція для форматування дати
+  const formatDate = (date: string) => {
+    const formattedDate = new Date(date);
+    return formattedDate.toLocaleDateString('uk-UA'); // Форматуємо за допомогою української локалі
+  };
+
   return (
     <div>
       {user ? (
@@ -272,10 +278,10 @@ const ManageRoomsPage = () => {
               <strong>Опис:</strong> {room.description}
             </p>
             <p>
-              <strong>Доступний з:</strong> {room.available_from}
+              <strong>Доступний з:</strong> {formatDate(room.available_from)}
             </p>
             <p>
-              <strong>Доступний до:</strong> {room.available_to}
+              <strong>Доступний до:</strong> {formatDate(room.available_to)}
             </p>
             <button onClick={() => setFormState(room)}>Редагувати</button>
             <button onClick={() => handleDelete(room.id)}>Видалити</button>

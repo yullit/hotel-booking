@@ -81,6 +81,12 @@ const Dashboard = () => {
     }
   };
 
+  // Функція для форматування дати
+  const formatDate = (date: string) => {
+    const formattedDate = new Date(date);
+    return formattedDate.toLocaleDateString('uk-UA'); // Форматуємо за допомогою української локалі
+  };
+
   return (
     <div>
       <h1>Особистий кабінет</h1>
@@ -101,8 +107,8 @@ const Dashboard = () => {
               <p>Опис: {booking.description}</p>
               <p>Ціна: {booking.price} грн/день</p>
               <p>Місткість: {booking.capacity} осіб</p>
-              <p>Дата заїзду: {booking.check_in}</p>
-              <p>Дата виїзду: {booking.check_out}</p>
+              <p>Дата заїзду: {formatDate(booking.check_in)}</p>
+              <p>Дата виїзду: {formatDate(booking.check_out)}</p>
               <button onClick={() => handleCancelBooking(booking.id)}>
                 Скасувати бронювання
               </button>
