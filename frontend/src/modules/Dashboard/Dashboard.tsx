@@ -6,25 +6,37 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    navigate("/login");
+    return;
+  }
 
-    fetch("http://localhost:5000/user/bookings", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  const decodedToken = JSON.parse(atob(token.split(".")[1])); // Декодуємо токен
+  if (decodedToken.role === "manager") {
+    navigate("/manage-rooms"); // Перенаправляємо на сторінку для менеджера
+  }
+
+  fetch("http://localhost:5000/user/bookings", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (Array.isArray(data)) {
+        setBookings(data); // Якщо відповідь є масивом
+      } else {
+        setError("Невірний формат даних");  // Якщо дані мають неправильний формат
+      }
     })
-      .then((response) => response.json())
-      .then((data) => setBookings(data))
-      .catch((err) => {
-        setError("Помилка при отриманні бронювань");
-        console.error(err);
-      });
-  }, [navigate]);
+    .catch((err) => {
+      setError("Помилка при отриманні бронювань");
+      console.error(err);
+    });
+}, [navigate]);
+
 
   const handleCancelBooking = async (bookingId: string) => {
     const token = localStorage.getItem("token");
@@ -59,16 +71,20 @@ const Dashboard = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
       <h2>Ваші бронювання</h2>
       <ul>
-        {bookings.map((booking) => (
-          <li key={booking.id}>
-            <p>Номер: {booking.roomName}</p>
-            <p>Дата заїзду: {booking.check_in}</p>
-            <p>Дата виїзду: {booking.check_out}</p>
-            <button onClick={() => handleCancelBooking(booking.id)}>
-              Скасувати бронювання
-            </button>
-          </li>
-        ))}
+        {Array.isArray(bookings) ? (
+          bookings.map((booking) => (
+            <li key={booking.id}>
+              <p>Номер: {booking.roomName}</p>
+              <p>Дата заїзду: {booking.check_in}</p>
+              <p>Дата виїзду: {booking.check_out}</p>
+              <button onClick={() => handleCancelBooking(booking.id)}>
+                Скасувати бронювання
+              </button>
+            </li>
+          ))
+        ) : (
+          <p>Немає бронювань</p>
+        )}
       </ul>
     </div>
   );

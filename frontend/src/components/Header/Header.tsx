@@ -20,8 +20,18 @@ const Header = () => {
   };
 
   // Перевірка ролі, чи є менеджер
-  const decodedToken = token ? JSON.parse(atob(token.split(".")[1])) : null;
-  const isManager = decodedToken && decodedToken.role === "manager";
+  const decodedToken = token ? token.split(".")[1] : null;
+  let decodedPayload;
+  if (decodedToken) {
+    try {
+      decodedPayload = JSON.parse(atob(decodedToken));
+    } catch (error) {
+      console.error("Помилка декодування токену:", error);
+      decodedPayload = null;
+    }
+  }
+
+  const isManager = decodedPayload && decodedPayload.role === "manager";
 
   return (
     <header className="header">
@@ -32,7 +42,8 @@ const Header = () => {
       </div>
       <nav>
         <ul>
-          <li><Link to="/rooms">Номери</Link></li>
+          {/* Якщо користувач не є менеджером, відображаємо посилання на Номери */}
+          {!isManager && <li><Link to="/rooms">Номери</Link></li>}
           <li><Link to="/contacts">Контакти</Link></li>
           {token ? (
             <>
