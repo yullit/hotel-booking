@@ -6,6 +6,7 @@ import { AuthContext } from "../../context/AuthContext"; // Імпортуємо
 const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // Поле для підтвердження пароля
   const [username, setUsername] = useState(""); // Для реєстрації
   const [firstName, setFirstName] = useState(""); // Ім'я
   const [lastName, setLastName] = useState(""); // Прізвище
@@ -20,12 +21,17 @@ const AuthPage = () => {
   }
 
   const { login } = authContext;
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password || (!isLogin && !username) || (!isLogin && !firstName) || (!isLogin && !lastName)) {
       setError("Будь ласка, заповніть всі поля.");
+      return;
+    }
+
+    if (!isLogin && password !== confirmPassword) {  // Перевірка на співпадіння паролів
+      setError("Паролі не збігаються.");
       return;
     }
 
@@ -72,41 +78,80 @@ const AuthPage = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            id="email"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Пароль</label>
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            id="password"
+          />
+        </div>
+
+        {/* Покажемо поле для підтвердження пароля тільки на реєстрації */}
+        {!isLogin && (
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Підтвердьте пароль</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              id="confirmPassword"
+            />
+          </div>
+        )}
+
         {!isLogin && (
           <>
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
+            <div className="form-group">
+              <label htmlFor="username">Логін</label>
+              <input
+                type="text"
+                name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                id="username"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="firstName">Ім'я</label>
+              <input
+                type="text"
+                name="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                id="firstName"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="lastName">Прізвище</label>
+              <input
+                type="text"
+                name="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                id="lastName"
+              />
+            </div>
           </>
         )}
+
         <button type="submit" disabled={loading}>
           {loading ? "Зачекайте..." : isLogin ? "Увійти" : "Зареєструватися"}
         </button>
