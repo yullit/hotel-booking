@@ -135,8 +135,9 @@ app.get("/rooms", async (req, res) => {
 });
 
 // Створення нового бронювання
+// Створення нового бронювання
 app.post("/user/bookings", async (req, res) => {
-  const { roomId, checkIn, checkOut } = req.body;
+  const { roomId, checkIn, checkOut, totalAmount } = req.body; // Додаємо totalAmount
   const token = req.headers.authorization.split(" ")[1];
 
   if (!token) return res.status(401).send({ message: "Токен не надано" });
@@ -146,8 +147,8 @@ app.post("/user/bookings", async (req, res) => {
     const userId = decoded.userId; // Отримуємо ID користувача з токену
 
     const result = await client.query(
-      "INSERT INTO bookings (user_id, room_id, check_in, check_out) VALUES ($1, $2, $3, $4) RETURNING *",
-      [userId, roomId, checkIn, checkOut]
+      "INSERT INTO bookings (user_id, room_id, check_in, check_out, total_amount) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [userId, roomId, checkIn, checkOut, totalAmount] // Зберігаємо totalAmount
     );
     res.status(201).json(result.rows[0]); // Повертаємо дані бронювання
   } catch (err) {
@@ -156,8 +157,10 @@ app.post("/user/bookings", async (req, res) => {
   }
 });
 
+
 // Отримання бронювань користувача
 // Отримання бронювань користувача з деталями кімнат
+// Отримання бронювань користувача з деталями кімнат і загальною сумою
 app.get("/user/bookings", async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   if (!token) return res.status(401).send({ message: "Токен не надано" });
@@ -166,19 +169,22 @@ app.get("/user/bookings", async (req, res) => {
     const decoded = jwt.verify(token, "secretkey");
     const userId = decoded.userId;
 
+    // Оновлений запит, який також вибирає поле total_amount
     const result = await client.query(
-      `SELECT b.id, r.name, r.price, r.capacity, r.description, b.check_in, b.check_out
+      `SELECT b.id, r.name, r.price, r.capacity, r.description, b.check_in, b.check_out, b.total_amount
        FROM bookings b
        JOIN rooms r ON b.room_id = r.id
        WHERE b.user_id = $1 AND r.is_deleted = false`,
       [userId]
     );
-    res.json(result.rows); // Повертаємо список бронювань користувача з деталями номерів
+
+    res.json(result.rows); // Повертаємо бронювання з деталями номерів, включаючи total_amount
   } catch (err) {
     console.error("Помилка при отриманні бронювань:", err);
     res.status(500).send({ message: "Помилка при отриманні бронювань" });
   }
 });
+
 
 
 // Отримання конкретної кімнати (по id)
@@ -319,9 +325,6 @@ app.post("/create-payment-intent", async (req, res) => {
     res.status(500).send({ message: "Помилка при створенні Payment Intent" });
   }
 });
-
-
-
 
 // Отримання даних користувача (ім'я та прізвище)
 app.get("/user", async (req, res) => {

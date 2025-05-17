@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";  // Імпортуємо Stripe Elements
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js"; // Імпортуємо Stripe Elements
 
 const BookingPage = () => {
-  const { id } = useParams();  // Отримуємо ID номера
+  const { id } = useParams(); // Отримуємо ID номера
   const navigate = useNavigate();
   const location = useLocation(); // Отримуємо state з RoomDetailsPage
   const { checkInDate, checkOutDate } = location.state || {};
@@ -64,14 +64,17 @@ const BookingPage = () => {
 
     try {
       // Запит на створення Payment Intent
-      const response = await fetch("http://localhost:5000/create-payment-intent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ amount: totalPrice }),  // amount - це ціна номера
-      });
+      const response = await fetch(
+        "http://localhost:5000/create-payment-intent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ amount: totalPrice }), // amount - це ціна номера
+        }
+      );
 
       const { clientSecret } = await response.json(); // Отримуємо clientSecret
 
@@ -82,11 +85,14 @@ const BookingPage = () => {
       }
 
       // Завершення платежу через Stripe Elements
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement, // Збираємо дані картки
-        },
-      });
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement, // Збираємо дані картки
+          },
+        }
+      );
 
       if (error) {
         setError(error.message || "Помилка при обробці платежу"); // Якщо є помилка при оплаті
@@ -103,11 +109,12 @@ const BookingPage = () => {
             roomId: id,
             checkIn: checkInDate,
             checkOut: checkOutDate,
-          }), // Передаємо дату бронювання
+            totalAmount: totalPrice, // Додаємо totalAmount до запиту
+          }),
         })
           .then(() => {
             alert("Бронювання успішно створено!");
-            navigate("/dashboard");  // Перенаправляємо користувача в особистий кабінет
+            navigate("/dashboard"); // Перенаправляємо користувача в особистий кабінет
           })
           .catch((err) => {
             setError("Помилка при створенні бронювання");
@@ -128,7 +135,6 @@ const BookingPage = () => {
   return (
     <div>
       <h2>Бронювання номеру: {room.name}</h2>
-      <p>Ціна: {room.price} грн/день</p>
       <p>Загальна сума до оплати: {totalPrice} грн</p>
       <div>
         {/* Форма для введення платіжних даних */}

@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [bookings, setBookings] = useState<any[]>([]);
-  const [user, setUser] = useState<{ first_name: string; last_name: string } | null>(null);
+  const [user, setUser] = useState<{
+    first_name: string;
+    last_name: string;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -34,7 +37,7 @@ const Dashboard = () => {
         console.error(err);
       });
 
-    // Отримуємо бронювання користувача з деталями номерів
+    // Отримуємо бронювання користувача з деталями номерів та сумою
     fetch("http://localhost:5000/user/bookings", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -84,7 +87,7 @@ const Dashboard = () => {
   // Функція для форматування дати
   const formatDate = (date: string) => {
     const formattedDate = new Date(date);
-    return formattedDate.toLocaleDateString('uk-UA'); // Форматуємо за допомогою української локалі
+    return formattedDate.toLocaleDateString("uk-UA"); // Форматуємо за допомогою української локалі
   };
 
   return (
@@ -93,7 +96,9 @@ const Dashboard = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {user ? (
-        <h1>Вітаємо, {user.first_name} {user.last_name}</h1>
+        <h1>
+          Вітаємо, {user.first_name} {user.last_name}
+        </h1>
       ) : (
         <p>Завантаження...</p>
       )}
@@ -105,10 +110,16 @@ const Dashboard = () => {
             <li key={booking.id}>
               <p>Номер: {booking.name}</p>
               <p>Опис: {booking.description}</p>
-              <p>Ціна: {booking.price} грн/день</p>
               <p>Місткість: {booking.capacity} осіб</p>
               <p>Дата заїзду: {formatDate(booking.check_in)}</p>
               <p>Дата виїзду: {formatDate(booking.check_out)}</p>
+              <p>
+                Загальна сума:{" "}
+                {booking.total_amount
+                  ? booking.total_amount + " грн"
+                  : "Немає суми"}
+              </p>{" "}
+              {/* Перевірка наявності total_amount */}
               <button onClick={() => handleCancelBooking(booking.id)}>
                 Скасувати бронювання
               </button>
