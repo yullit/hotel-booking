@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";  // Імпортуємо Stripe Elements
 
 const BookingPage = () => {
   const { id } = useParams();  // Отримуємо ID номера
   const navigate = useNavigate();
+  const location = useLocation(); // Отримуємо state з RoomDetailsPage
+  const { checkInDate, checkOutDate } = location.state || {};
   const [room, setRoom] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [totalPrice, setTotalPrice] = useState<number>(0); // Загальна ціна
   const stripe = useStripe();
   const elements = useElements();
 
@@ -28,6 +31,23 @@ const BookingPage = () => {
         });
     }
   }, [id, navigate]);
+
+  // Функція для обчислення кількості днів між датами
+  const calculateDays = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Перетворюємо мілісекунди на дні
+    return diffDays;
+  };
+
+  // Обчислюємо загальну суму
+  useEffect(() => {
+    if (checkInDate && checkOutDate && room) {
+      const days = calculateDays(checkInDate, checkOutDate);
+      setTotalPrice(room.price * days); // Множимо ціну за день на кількість днів
+    }
+  }, [checkInDate, checkOutDate, room]);
 
   const handlePayment = async () => {
     if (!stripe || !elements) {
@@ -50,7 +70,7 @@ const BookingPage = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ amount: room.price }),  // amount - це ціна номера
+        body: JSON.stringify({ amount: totalPrice }),  // amount - це ціна номера
       });
 
       const { clientSecret } = await response.json(); // Отримуємо clientSecret
@@ -79,7 +99,11 @@ const BookingPage = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ roomId: id, checkIn: "2025-06-01", checkOut: "2025-06-07" }), // Передаємо дату бронювання
+          body: JSON.stringify({
+            roomId: id,
+            checkIn: checkInDate,
+            checkOut: checkOutDate,
+          }), // Передаємо дату бронювання
         })
           .then(() => {
             alert("Бронювання успішно створено!");
@@ -105,6 +129,7 @@ const BookingPage = () => {
     <div>
       <h2>Бронювання номеру: {room.name}</h2>
       <p>Ціна: {room.price} грн/день</p>
+      <p>Загальна сума до оплати: {totalPrice} грн</p>
       <div>
         {/* Форма для введення платіжних даних */}
         <CardElement />
