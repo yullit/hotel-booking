@@ -157,6 +157,7 @@ app.post("/user/bookings", async (req, res) => {
 });
 
 // Отримання бронювань користувача
+// Отримання бронювань користувача з деталями кімнат
 app.get("/user/bookings", async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   if (!token) return res.status(401).send({ message: "Токен не надано" });
@@ -166,15 +167,19 @@ app.get("/user/bookings", async (req, res) => {
     const userId = decoded.userId;
 
     const result = await client.query(
-      "SELECT b.id, r.name as roomName, b.check_in, b.check_out FROM bookings b JOIN rooms r ON b.room_id = r.id WHERE b.user_id = $1",
+      `SELECT b.id, r.name, r.price, r.capacity, r.description, b.check_in, b.check_out
+       FROM bookings b
+       JOIN rooms r ON b.room_id = r.id
+       WHERE b.user_id = $1 AND r.is_deleted = false`,
       [userId]
     );
-    res.json(result.rows); // Повертаємо список бронювань користувача
+    res.json(result.rows); // Повертаємо список бронювань користувача з деталями номерів
   } catch (err) {
     console.error("Помилка при отриманні бронювань:", err);
     res.status(500).send({ message: "Помилка при отриманні бронювань" });
   }
 });
+
 
 // Отримання конкретної кімнати (по id)
 app.get("/rooms/:id", async (req, res) => {

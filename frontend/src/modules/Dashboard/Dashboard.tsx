@@ -27,7 +27,6 @@ const Dashboard = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("User data:", data); // Додано для перевірки
         setUser(data); // Зберігаємо ім'я та прізвище користувача
       })
       .catch((err) => {
@@ -35,6 +34,7 @@ const Dashboard = () => {
         console.error(err);
       });
 
+    // Отримуємо бронювання користувача з деталями номерів
     fetch("http://localhost:5000/user/bookings", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -97,7 +97,10 @@ const Dashboard = () => {
         {Array.isArray(bookings) ? (
           bookings.map((booking) => (
             <li key={booking.id}>
-              <p>Номер: {booking.roomName}</p>
+              <p>Номер: {booking.name}</p>
+              <p>Опис: {booking.description}</p>
+              <p>Ціна: {booking.price} грн/день</p>
+              <p>Місткість: {booking.capacity} осіб</p>
               <p>Дата заїзду: {booking.check_in}</p>
               <p>Дата виїзду: {booking.check_out}</p>
               <button onClick={() => handleCancelBooking(booking.id)}>
