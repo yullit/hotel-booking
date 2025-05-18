@@ -13,6 +13,14 @@ const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Додаткові стейти для помилок валідації
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+  const [firstNameError, setFirstNameError] = useState<string | null>(null);
+  const [lastNameError, setLastNameError] = useState<string | null>(null);
+
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
 
@@ -22,16 +30,69 @@ const AuthPage = () => {
 
   const { login } = authContext;
 
+  // Валідація email
+  const validateEmail = (email: string) => {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return regex.test(email);
+  };
+
+  // Валідація пароля
+  const validatePassword = (password: string) => {
+    return password.length >= 6; // Перевірка мінімальної довжини пароля
+  };
+
+  // Валідація підтвердження пароля
+  const validateConfirmPassword = (password: string, confirmPassword: string) => {
+    return password === confirmPassword;
+  };
+
+  // Валідація форми перед відправленням
+  const validateForm = () => {
+    let valid = true;
+    if (!validateEmail(email)) {
+      setEmailError("Електронна пошта повинна мати формат: user@example.com");
+      valid = false;
+    } else {
+      setEmailError(null);
+    }
+
+    if (!validatePassword(password)) {
+      setPasswordError("Пароль має бути не менше 6 символів.");
+      valid = false;
+    } else {
+      setPasswordError(null);
+    }
+
+    if (!isLogin && !validateConfirmPassword(password, confirmPassword)) {
+      setConfirmPasswordError("Паролі не збігаються.");
+      valid = false;
+    } else {
+      setConfirmPasswordError(null);
+    }
+
+    if (!isLogin && !firstName) {
+      setFirstNameError("Будь ласка, введіть ваше ім'я.");
+      valid = false;
+    } else {
+      setFirstNameError(null);
+    }
+
+    if (!isLogin && !lastName) {
+      setLastNameError("Будь ласка, введіть ваше прізвище.");
+      valid = false;
+    } else {
+      setLastNameError(null);
+    }
+
+    return valid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password || (!isLogin && !firstName) || (!isLogin && !lastName)) {
-      setError("Будь ласка, заповніть всі поля.");
-      return;
-    }
-
-    if (!isLogin && password !== confirmPassword) {  // Перевірка на співпадіння паролів
-      setError("Паролі не збігаються.");
+    // Перевірка валідності перед відправкою
+    if (!validateForm()) {
+      setError("Будь ласка, виправте помилки.");
       return;
     }
 
@@ -78,29 +139,31 @@ const AuthPage = () => {
 
   return (
     <div className="auth-form-container">
-      <form onSubmit={handleSubmit} className="auth-form">
+      <form onSubmit={handleSubmit} className="auth-form" noValidate> {/* Забороняємо вбудовану валідацію браузера */}
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
-            placeholder="Введіть свою електронну адресу"
+            placeholder="Введіть свою електронну пошту"
             type="email"
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             id="email"
           />
+          {emailError && <div className="error-message">{emailError}</div>} {/* Показуємо помилку */}
         </div>
 
         <div className="form-group">
           <label htmlFor="password">Пароль</label>
           <input
-            placeholder="Введіть свій пароль"
+            placeholder="Ведіть свій пароль"
             type="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             id="password"
           />
+          {passwordError && <div className="error-message">{passwordError}</div>} {/* Показуємо помилку */}
         </div>
 
         {/* Покажемо поле для підтвердження пароля тільки на реєстрації */}
@@ -115,6 +178,7 @@ const AuthPage = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               id="confirmPassword"
             />
+            {confirmPasswordError && <div className="error-message">{confirmPasswordError}</div>} {/* Показуємо помилку */}
           </div>
         )}
 
@@ -130,6 +194,7 @@ const AuthPage = () => {
                 onChange={(e) => setFirstName(e.target.value)}
                 id="firstName"
               />
+              {firstNameError && <div className="error-message">{firstNameError}</div>} {/* Показуємо помилку */}
             </div>
 
             <div className="form-group">
@@ -142,6 +207,7 @@ const AuthPage = () => {
                 onChange={(e) => setLastName(e.target.value)}
                 id="lastName"
               />
+              {lastNameError && <div className="error-message">{lastNameError}</div>} {/* Показуємо помилку */}
             </div>
           </>
         )}
@@ -150,6 +216,7 @@ const AuthPage = () => {
           {loading ? "Зачекайте..." : isLogin ? "Увійти" : "Зареєструватися"}
         </button>
       </form>
+      {error && <p className="error-message-global">{error}</p>}
 
       <p>
         {isLogin ? (
@@ -164,8 +231,6 @@ const AuthPage = () => {
           </>
         )}
       </p>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };
