@@ -361,16 +361,38 @@ app.post("/check-availability", async (req, res) => {
   const { roomId, checkIn, checkOut } = req.body;
 
   try {
+    // Отримуємо доступні дати для номеру
+    const roomAvailability = await client.query(
+      "SELECT available_from, available_to FROM rooms WHERE id = $1",
+      [roomId]
+    );
+
+    if (roomAvailability.rows.length === 0) {
+      return res.status(404).send({ message: "Номер не знайдений" });
+    }
+
+    const room = roomAvailability.rows[0];
+
+    // Перевіряємо, чи вибрані дати входять в межі доступних дат
+    const isAvailable =
+      new Date(checkIn) >= new Date(room.available_from) &&
+      new Date(checkOut) <= new Date(room.available_to);
+
+    if (!isAvailable) {
+      return res.json({ available: false }); // Якщо дати не підходять
+    }
+
+    // Перевірка на наявність бронювання в обрані дати
     const result = await client.query(
       "SELECT * FROM bookings WHERE room_id = $1 AND ((check_in BETWEEN $2 AND $3) OR (check_out BETWEEN $2 AND $3))",
       [roomId, checkIn, checkOut]
     );
 
     if (result.rows.length > 0) {
-      return res.json({ available: false });
+      return res.json({ available: false }); // Якщо є бронювання в ці дати
     }
 
-    return res.json({ available: true });
+    return res.json({ available: true }); // Якщо номер доступний
   } catch (err) {
     console.error("Помилка при перевірці доступності:", err);
     res.status(500).send({ message: "Помилка при перевірці доступності" });

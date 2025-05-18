@@ -65,6 +65,11 @@ const RoomDetailsPage = () => {
     }
   };
 
+  // Функція для повернення на сторінку Номери
+  const goBackToRooms = () => {
+    navigate("/rooms");
+  };
+
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!room) return <p>Завантаження номеру...</p>;
 
@@ -92,10 +97,17 @@ const RoomDetailsPage = () => {
 
       <button onClick={checkAvailability}>Перевірити доступність</button>
 
-      {available !== null && (
-        <button onClick={handleBooking} disabled={!available}>
-          {available ? "Забронювати" : "Номер не доступний"}
-        </button>
+      {/* Якщо номер недоступний, заміняємо кнопку на текст і додаємо кнопку для повернення */}
+      {available !== null && !available && (
+        <>
+          <p style={{ color: "red" }}>Номер не доступний</p>
+          <button onClick={goBackToRooms}>Повернутись до номерів</button>
+        </>
+      )}
+
+      {/* Якщо номер доступний, показуємо кнопку для бронювання */}
+      {available !== null && available && (
+        <button onClick={handleBooking}>Забронювати</button>
       )}
     </div>
   );
