@@ -20,53 +20,6 @@
   overflow: hidden; /* Забезпечуємо, що нічого не виходить за межі */
 }
 
-
-// Hero Content
-.hero-content {
-  max-width: 600px;
-  padding: 20px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  margin: 0 auto;
-}
-
-.hero-content h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-}
-
-.booking-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.booking-form label {
-  font-size: 1.2rem;
-}
-
-.booking-form input {
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid $border-color;
-  border-radius: 4px;
-}
-
-.booking-form button {
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  background-color: $primary-color;
-  color: $white-color;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.booking-form button:hover {
-  background-color: darken($primary-color, 10%);
-}
-
 .carousel-section {
   margin: 50px 0;
 }
@@ -195,5 +148,142 @@
   .cta-button {
     font-size: 16px;
     padding: 12px 25px;
+  }
+}
+
+
+// Hero Content
+// Hero Content
+.hero-content {
+  max-width: 800px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  margin: 0 auto;
+  color: $white-color;
+  display: flex;
+  flex-direction: column; /* За замовчуванням елементи вертикальні */
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  text-align: center; /* Заголовок по центру */
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column; /* Вертикальне розташування елементів за замовчуванням */
+  gap: 20px; /* Відступ між елементами форми */
+}
+
+.booking-form label {
+  font-size: 1.1rem;
+  margin-bottom: 10px; /* Відступ під лейблом */
+  color: $white-color;
+}
+
+.booking-form input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  height: 45px; /* Встановлюємо висоту для всіх інпутів */
+}
+
+.booking-form button {
+  padding: 12px 20px; /* Збільшена висота кнопки */
+  font-size: 1rem;
+  background-color: $primary-color;
+  color: $white-color;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  height: 45px; /* Встановлюємо висоту для кнопки, щоб вона була на одному рівні з інпутами */
+  white-space: nowrap; /* Забороняємо перенос тексту на новий рядок */
+  min-width: 220px; /* Мінімальна ширина кнопки */
+  text-align: center; /* Текст по центру */
+  box-sizing: border-box; /* Забезпечуємо, що padding враховується в ширину кнопки */
+}
+
+.booking-form button:hover {
+  background-color: darken($primary-color, 10%);
+}
+
+/* Горизонтальне розташування на великих екранах */
+@media (min-width: 768px) {
+  .booking-form {
+    flex-direction: row; /* Горизонтальне розташування лейблів та інпутів */
+    justify-content: space-between; /* Відстань між елементами */
+    gap: 20px;
+  }
+
+  .booking-form label {
+    width: 30%; /* Відповідний розмір лейблів */
+  }
+
+  .booking-form input,
+  .booking-form button {
+    width: 30%; /* Встановлюємо однакову ширину для інпутів та кнопки */
+    height: 45px; /* Встановлюємо висоту для кнопки та інпутів, щоб вони були на рівні */
+  }
+
+  .booking-form button {
+    width: auto; /* Ширина кнопки адаптується до вмісту */
+    min-width: 220px; /* Забезпечуємо, щоб кнопка мала мінімальну ширину */
+    max-width: 320px; /* Максимальна ширина для кнопки на великих екранах */
+  }
+}
+
+/* Адаптація для малих екранів */
+@media (max-width: 768px) {
+  .hero-content {
+    max-width: 90%; /* Зменшуємо максимальну ширину на мобільних пристроях */
+    padding: 15px; /* Менше відступів */
+  }
+
+  .hero-content h1 {
+    font-size: 2.2rem; /* Зменшуємо розмір заголовка */
+    margin-bottom: 15px;
+  }
+
+  .booking-form label {
+    font-size: 1rem; /* Менший шрифт для лейблів */
+  }
+
+  .booking-form input,
+  .booking-form button {
+    font-size: 1rem; /* Менший шрифт для інпутів та кнопок */
+    height: 40px; /* Зменшуємо висоту для мобільних пристроїв */
+  }
+
+  .booking-form {
+    gap: 15px; /* Зменшуємо відступи між елементами форми */
+  }
+}
+
+/* Дуже маленькі екрани (мобільні пристрої) */
+@media (max-width: 480px) {
+  .hero-content {
+    max-width: 95%; /* Майже вся ширина екрану */
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem; /* Ще менший заголовок */
+  }
+
+  .booking-form label {
+    font-size: 0.9rem; /* Зменшуємо шрифт лейблів */
+  }
+
+  .booking-form input,
+  .booking-form button {
+    font-size: 1rem; /* Розмір шрифтів для інпутів та кнопок */
+    height: 35px; /* Зменшуємо висоту для мобільних пристроїв */
+  }
+
+  .booking-form button {
+    min-width: 180px; /* Зменшуємо мінімальну ширину кнопки */
   }
 }
