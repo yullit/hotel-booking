@@ -61,16 +61,21 @@ const HomePage = () => {
           </form>
         </div>
       </div>
+      {/* Info Section */}
+      <div className="info-section">
+        <h2>Ласкаво просимо в наш готель!</h2>
+        <p>Забронюйте номер, який підходить саме вам.</p>
+      </div>
 
       {/* Carousel Section */}
       <div className="carousel-section">
         <Carousel />
       </div>
-
-      {/* Info Section */}
-      <div className="info-section">
-        <h2>Ласкаво просимо в наш готель!</h2>
-        <p>Забронюйте номер, який підходить саме вам.</p>
+      <div className="welcome-container">
+        <h3 className="welcome-heading">
+          <span>Ми подбаємо </span>
+          <span>про ваш комфорт і затишок!</span>
+        </h3>
       </div>
 
       {/* Features Section */}
