@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext"; // Імпортуємо AuthContext
+import './AuthPage.scss'; // Імпортуємо стилі
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState(""); // Поле для підтвердження пароля
-  const [username, setUsername] = useState(""); // Для реєстрації
   const [firstName, setFirstName] = useState(""); // Ім'я
   const [lastName, setLastName] = useState(""); // Прізвище
   const [isLogin, setIsLogin] = useState(true);
@@ -25,7 +25,7 @@ const AuthPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password || (!isLogin && !username) || (!isLogin && !firstName) || (!isLogin && !lastName)) {
+    if (!email || !password || (!isLogin && !firstName) || (!isLogin && !lastName)) {
       setError("Будь ласка, заповніть всі поля.");
       return;
     }
@@ -39,7 +39,7 @@ const AuthPage = () => {
     setError(null);
 
     const endpoint = isLogin ? "login" : "register";
-    const body = { email, password, firstName, lastName, ...(isLogin ? {} : { username }) }; // Додаємо поля firstName і lastName при реєстрації
+    const body = { email, password, firstName, lastName }; // Видаляємо поле username
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {
@@ -77,11 +77,12 @@ const AuthPage = () => {
   };
 
   return (
-    <div>
+    <div className="auth-form-container">
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
+            placeholder="Введіть свою електронну адресу"
             type="email"
             name="email"
             value={email}
@@ -93,6 +94,7 @@ const AuthPage = () => {
         <div className="form-group">
           <label htmlFor="password">Пароль</label>
           <input
+            placeholder="Введіть свій пароль"
             type="password"
             name="password"
             value={password}
@@ -106,6 +108,7 @@ const AuthPage = () => {
           <div className="form-group">
             <label htmlFor="confirmPassword">Підтвердьте пароль</label>
             <input
+              placeholder="Підтвердьте свій пароль"
               type="password"
               name="confirmPassword"
               value={confirmPassword}
@@ -118,19 +121,9 @@ const AuthPage = () => {
         {!isLogin && (
           <>
             <div className="form-group">
-              <label htmlFor="username">Логін</label>
-              <input
-                type="text"
-                name="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                id="username"
-              />
-            </div>
-
-            <div className="form-group">
               <label htmlFor="firstName">Ім'я</label>
               <input
+                placeholder="Вкажіть своє ім'я"
                 type="text"
                 name="firstName"
                 value={firstName}
@@ -142,6 +135,7 @@ const AuthPage = () => {
             <div className="form-group">
               <label htmlFor="lastName">Прізвище</label>
               <input
+                placeholder="Вкажіть своє прізвище"
                 type="text"
                 name="lastName"
                 value={lastName}

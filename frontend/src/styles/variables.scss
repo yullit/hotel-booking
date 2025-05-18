@@ -1,0 +1,23 @@
+// _variables.scss
+
+// Основні кольори
+$primary-color: #007BFF; // Синій (основний колір для акцентів)
+$secondary-color: #333;  // Темний (для тексту)
+$background-color: #f4f4f9; // Легкий фон
+$white-color: #fff; // Білий
+$border-color: #e0e0e0; // Світло-сірий для бордерів та ліній
+$light-grey-color: #f9f9f9; // Світло-сірий фон для елементів
+$red-color: #d9534f; // Червоний для попереджень
+
+// Кольори для кнопок та лінків
+$link-hover-color: $primary-color;
+$button-background: $primary-color;
+$button-text-color: $white-color;
+$button-hover-background: darken($primary-color, 10%);
+
+// Тіні
+$box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+// Стилі тексту
+$text-color: $secondary-color;
+$text-light: #666; // Світло-сірий текст (для менш важливих елементів)

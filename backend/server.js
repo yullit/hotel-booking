@@ -53,26 +53,24 @@ const verifyRole = (role) => {
 
 // Реєстрація користувача
 app.post("/register", async (req, res) => {
-  const { username, email, password, firstName, lastName, role = "client" } = req.body; // Роль за замовчуванням - 'client'
+  const { email, password, firstName, lastName, role = "client" } = req.body;
 
   try {
-    // Перевірка, чи існує користувач з таким ім'ям або email
+    // Перевірка, чи існує користувач з таким email
     const checkUser = await client.query(
-      "SELECT * FROM users WHERE username = $1 OR email = $2",
-      [username, email]
+      "SELECT * FROM users WHERE email = $1",
+      [email]
     );
 
     if (checkUser.rows.length > 0) {
-      return res
-        .status(400)
-        .send("Користувач з таким ім'ям або email вже існує");
+      return res.status(400).send("Користувач з таким email вже існує");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10); // Хешуємо пароль
 
     const result = await client.query(
-      "INSERT INTO users (username, email, password, first_name, last_name, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [username, email, hashedPassword, firstName, lastName, role] // Додаємо ім'я та прізвище
+      "INSERT INTO users (email, password, first_name, last_name, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [email, hashedPassword, firstName, lastName, role]
     );
 
     const newUser = result.rows[0];
@@ -93,7 +91,8 @@ app.post("/register", async (req, res) => {
 });
 
 
-// Авторизація користувача (логін)
+
+// Авторизація користувача
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -124,6 +123,7 @@ app.post("/login", async (req, res) => {
     res.status(500).send({ message: "Помилка при авторизації" });
   }
 });
+
 
 // Отримання всіх кімнат (для користувачів)
 app.get("/rooms", async (req, res) => {

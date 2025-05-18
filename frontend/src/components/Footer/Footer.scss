@@ -1,24 +1,44 @@
-// Змінні
-$footer-bg-color: #333;
-$footer-text-color: white;
-$footer-link-color: #ff7f50;
-$footer-link-hover-color: underline;
-$footer-padding: 20px;
-$footer-link-margin: 0 10px;
+// Імпортуємо змінні
+@import '../../styles/variables.scss';
 
 .footer {
-  background-color: $footer-bg-color;
-  color: $footer-text-color;
-  padding: $footer-padding;
+  background-color: $secondary-color;
+  color: $white-color;
   text-align: center;
+  padding: 10px 20px; // Зменшуємо вертикальні відступи
+  margin-top: auto;  // Підняти футер внизу, якщо головний контент займає весь екран
+  min-height: 60px;  // Зменшуємо мінімальну висоту футера
+  width: 100%;  // Футер займає всю доступну ширину, але не більше 1200px
+  margin-left: auto;  // Центруємо футер
+  margin-right: auto; // Центруємо футер
+}
 
-  a {
-    color: $footer-link-color;
-    text-decoration: none;
-    margin: $footer-link-margin;
+.footer p {
+  font-size: 14px;
+}
 
-    &:hover {
-      text-decoration: $footer-link-hover-color;
-    }
+.footer a {
+  color: $white-color;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+// Адаптивність для планшетів і телефонів
+@media (max-width: 768px) {
+  .footer {
+    padding: 8px 15px; // Зменшуємо відступи для маленьких екранів
+  }
+
+  .footer p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer p {
+    font-size: 10px;
   }
 }

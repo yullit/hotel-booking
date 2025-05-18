@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import './HomePage.scss';
 import { useNavigate } from 'react-router-dom';
+import Carousel from './components/Carousel/Carousel';
 
 const HomePage = () => {
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
@@ -54,13 +55,34 @@ const HomePage = () => {
 
       {/* Carousel Section */}
       <div className="carousel-section">
-        {/* Тут можна додати карусель */}
+        <Carousel />
       </div>
 
       {/* Info Section */}
       <div className="info-section">
         <h2>Ласкаво просимо в наш готель!</h2>
         <p>Забронюйте номер, який підходить саме вам.</p>
+      </div>
+
+      {/* Features Section */}
+      <div className="features-section">
+        <div className="feature-item">
+          <h3>Стильний дизайн</h3>
+          <p>У нас ви знайдете сучасні номери з стильним інтер'єром.</p>
+        </div>
+        <div className="feature-item">
+          <h3>Комфорт</h3>
+          <p>Ми гарантуємо комфорт та зручність для наших гостей.</p>
+        </div>
+        <div className="feature-item">
+          <h3>Зручне розташування</h3>
+          <p>Наш готель розташований у самому центрі міста.</p>
+        </div>
+      </div>
+
+      {/* Call to Action */}
+      <div className="cta-section">
+        <button className="cta-button">Забронювати номер</button>
       </div>
     </div>
   );

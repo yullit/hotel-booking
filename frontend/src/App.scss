@@ -1,20 +1,22 @@
-// src/App.scss
+// Імпортуємо змінні
+@import './styles/variables.scss';
 
-@import './styles/index';  // Імпортуємо глобальні стилі, міксини та змінні
-
-html {
-  scroll-behavior: smooth;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: Mont, sans-serif;
-  background-color: $light-grey-color;
-
-  &.menu-open {
-    overflow: hidden;
-  }
+  font-family: 'Arial', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+  min-height: 100vh; // Задаємо мінімальну висоту для body, щоб не було прокручування
+  display: flex;
+  flex-direction: column;
 }
 
+// Гарантуємо, що на всю висоту екрану працює flex
 .app {
   display: flex;
   flex-direction: column;
@@ -23,8 +25,82 @@ body {
 
 .main {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .container {
-  @include container;  // Використовуємо міксин для контейнера
+  max-width: 1200px;
+  width: 100%;
+  padding: 20px;
+  margin-top: 20px; // Додаємо маленький верхній відступ для відокремлення від інших елементів
+  margin-bottom: 20px; // Додаємо нижній відступ для кращої організації простору
+}
+
+
+footer {
+  padding: 20px;
+  background-color: $secondary-color;
+  color: $white-color;
+  text-align: center;
+  margin-top: auto; // Це забезпечить, щоб футер завжди був внизу
+  min-height: 100px;  // Мінімальна висота футера, щоб він не стискався
+}
+
+footer a {
+  color: $white-color;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+// Адаптивність для планшетів і телефонів
+@media (max-width: 1200px) {
+  .container {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav ul {
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+  }
+
+  footer {
+    padding: 10px;
+  }
+
+  footer p {
+    font-size: 12px;
+  }
+
+  .main {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 20px;
+  }
+
+  nav ul li a {
+    font-size: 14px;
+  }
+
+  .container {
+    padding: 5px;
+  }
 }
