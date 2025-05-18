@@ -11,6 +11,8 @@ const BookingPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState<number>(0); // Загальна ціна
+  const [paymentSuccess, setPaymentSuccess] = useState<boolean>(false); // Створюємо стан для відображення успішної оплати
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Повідомлення про успіх
   const stripe = useStripe();
   const elements = useElements();
 
@@ -113,8 +115,11 @@ const BookingPage = () => {
           }),
         })
           .then(() => {
-            alert("Бронювання успішно створено!");
-            navigate("/dashboard"); // Перенаправляємо користувача в особистий кабінет
+            setSuccessMessage("Бронювання успішно створено! Ви будете перенаправлені в особистий кабінет.");
+            setPaymentSuccess(true);
+            setTimeout(() => {
+              navigate("/dashboard"); // Перенаправляємо користувача в особистий кабінет після 3 секунд
+            }, 3000);
           })
           .catch((err) => {
             setError("Помилка при створенні бронювання");
@@ -143,6 +148,10 @@ const BookingPage = () => {
       <button onClick={handlePayment} disabled={loading}>
         {loading ? "Зачекайте..." : "Оплатити та підтвердити бронювання"}
       </button>
+
+      {paymentSuccess && successMessage && (
+        <p style={{ color: "green" }}>{successMessage}</p>
+      )}
     </div>
   );
 };
