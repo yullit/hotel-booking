@@ -1,19 +1,24 @@
+// src/pages/RoomsPage.tsx
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 const RoomsPage = () => {
   const [rooms, setRooms] = useState<any[]>([]);
-  const [sortedRooms, setSortedRooms] = useState<any[]>([]); // Стан для відсортованих номерів
+  const [sortedRooms, setSortedRooms] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none"); // Стан для збереження порядку сортування
-  const [capacityFilter, setCapacityFilter] = useState<string>(""); // Стан для фільтрації по місткості
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none");
+  const [capacityFilter, setCapacityFilter] = useState<string>("");
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { checkInDate, checkOutDate } = location.state || {};
 
   useEffect(() => {
     fetch("http://localhost:5000/rooms")
       .then((response) => response.json())
       .then((data) => {
         setRooms(data);
-        setSortedRooms(data); // Встановлюємо номери при першому завантаженні
+        setSortedRooms(data);
       })
       .catch((err) => {
         setError("Помилка при завантаженні номерів");
@@ -21,45 +26,63 @@ const RoomsPage = () => {
       });
   }, []);
 
-  // Функція для сортування номерів
-  const sortRooms = (order: "asc" | "desc") => {
-    const sorted = [...rooms].sort((a, b) => {
-      if (order === "asc") {
-        return a.price - b.price; // Сортуємо за зростанням
-      } else {
-        return b.price - a.price; // Сортуємо за спаданням
-      }
-    });
-    setSortedRooms(sorted); // Оновлюємо відсортовані номери
+  // Функція для порівняння дат
+  const isRoomAvailable = (room: any, checkInDate: Date, checkOutDate: Date) => {
+    const roomAvailableFrom = new Date(room.available_from).getTime();
+    const roomAvailableTo = new Date(room.available_to).getTime();
+    const checkInTime = checkInDate.getTime();
+    const checkOutTime = checkOutDate.getTime();
+
+    // Перевірка на доступність номера (немає перетину з іншими бронюваннями)
+    return roomAvailableFrom <= checkInTime && roomAvailableTo >= checkOutTime;
   };
 
-  // Обробник зміни сортування
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOrder = e.target.value as "asc" | "desc" | "none";
-    setSortOrder(selectedOrder); // Оновлюємо стан для сортування
-
-    if (selectedOrder === "none") {
-      setSortedRooms(rooms); // Якщо "Обрати", не сортуємо номери
-    } else {
-      sortRooms(selectedOrder); // Сортуємо номери відповідно до вибраного порядку
-    }
-  };
-
-  // Функція для фільтрації номерів за місткістю
-  const filterRoomsByCapacity = (rooms: any[]) => {
-    if (capacityFilter) {
-      return rooms.filter(room => room.capacity === parseInt(capacityFilter));
+  const filterRoomsByAvailability = (rooms: any[]) => {
+    if (checkInDate && checkOutDate) {
+      return rooms.filter((room) => isRoomAvailable(room, checkInDate, checkOutDate));
     }
     return rooms;
   };
 
-  // Обробник зміни фільтру за місткістю
+  const filteredRooms = filterRoomsByAvailability(sortedRooms);
+
+  const sortRooms = (order: "asc" | "desc") => {
+    const sorted = [...filteredRooms].sort((a, b) => {
+      if (order === "asc") {
+        return a.price - b.price;
+      } else {
+        return b.price - a.price;
+      }
+    });
+    setSortedRooms(sorted);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOrder = e.target.value as "asc" | "desc" | "none";
+    setSortOrder(selectedOrder);
+    if (selectedOrder === "none") {
+      setSortedRooms(rooms);
+    } else {
+      sortRooms(selectedOrder);
+    }
+  };
+
+  const filterRoomsByCapacity = (rooms: any[]) => {
+    if (capacityFilter) {
+      return rooms.filter((room) => room.capacity === parseInt(capacityFilter));
+    }
+    return rooms;
+  };
+
   const handleCapacityFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCapacityFilter(e.target.value);
   };
 
-  // Фільтруємо номери за місткістю перед сортуванням
-  const filteredRooms = filterRoomsByCapacity(sortedRooms);
+  const finalFilteredRooms = filterRoomsByCapacity(filteredRooms);
+
+  const goBackToHomePage = () => {
+    navigate("/"); // Перенаправлення на HomePage
+  };
 
   return (
     <div>
@@ -73,7 +96,7 @@ const RoomsPage = () => {
           value={sortOrder}
           onChange={handleSortChange}
         >
-          <option value="none" disabled={sortOrder !== "none"}>Обрати</option> {/* Додаємо опцію "Обрати", що стає недоступною при виборі сортування */}
+          <option value="none" disabled={sortOrder !== "none"}>Обрати</option>
           <option value="asc">За зростанням</option>
           <option value="desc">За спаданням</option>
         </select>
@@ -95,7 +118,7 @@ const RoomsPage = () => {
       </div>
 
       <ul>
-        {filteredRooms.map((room) => (
+        {finalFilteredRooms.map((room) => (
           <li key={room.id}>
             <p>{room.name} - {room.price} грн/добу</p>
             <Link to={`/rooms/${room.id}`}>
@@ -104,6 +127,9 @@ const RoomsPage = () => {
           </li>
         ))}
       </ul>
+
+      {/* Кнопка для повернення на сторінку вибору дат */}
+      <button onClick={goBackToHomePage}>Обрати інші дати</button>
     </div>
   );
 };
