@@ -8,4 +8,5 @@ export interface Room {
   available_from: string;
   available_to: string;
   is_deleted?: boolean;
+  photo_url?: string;
 }

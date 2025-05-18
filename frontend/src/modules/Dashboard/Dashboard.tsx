@@ -37,7 +37,7 @@ const Dashboard = () => {
         console.error(err);
       });
 
-    // Отримуємо бронювання користувача з деталями номерів та сумою
+    // Отримуємо бронювання користувача з деталями номерів та фото
     fetch("http://localhost:5000/user/bookings", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -117,9 +117,19 @@ const Dashboard = () => {
                 Загальна сума:{" "}
                 {booking.total_amount
                   ? booking.total_amount + " грн"
-                  : "Немає суми"}
+                  : "Немає суми"}{" "}
               </p>{" "}
               {/* Перевірка наявності total_amount */}
+
+              {/* Відображення фото номера */}
+              {booking.photo_url && (
+                <img
+                  src={`http://localhost:5000${booking.photo_url}`}
+                  alt={booking.name}
+                  style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                />
+              )}
+
               <button onClick={() => handleCancelBooking(booking.id)}>
                 Скасувати бронювання
               </button>

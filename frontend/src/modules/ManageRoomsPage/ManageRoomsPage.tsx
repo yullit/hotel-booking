@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios, { AxiosResponse, AxiosError } from "axios"; // Додаємо типи для axios
-import { Room } from "../../types/Room"; // Тип для номера
+import axios, { AxiosResponse, AxiosError } from "axios";
+import { Room } from "../../types/Room";
 
 const ManageRoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [formState, setFormState] = useState<Room | null>(null); // Для форми додавання/редагування
-  const [user, setUser] = useState<{
-    first_name: string;
-    last_name: string;
-  } | null>(null); // Для імені та прізвища менеджера
+  const [formState, setFormState] = useState<Room | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null); // Для фото
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-  const { roomId } = useParams<{ roomId?: string }>(); // Отримуємо параметр roomId з URL
+  const { roomId } = useParams<{ roomId?: string }>();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,41 +18,24 @@ const ManageRoomsPage = () => {
       return;
     }
 
-    const decodedToken = JSON.parse(atob(token.split(".")[1])); // Декодуємо токен
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
     if (decodedToken.role !== "manager") {
-      navigate("/rooms"); // Якщо не менеджер, перенаправляємо на сторінку з номерами
+      navigate("/rooms");
     }
 
-    // Отримуємо дані менеджера (ім'я та прізвище)
-    axios
-      .get("http://localhost:5000/user", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response: AxiosResponse) => {
-        setUser(response.data); // Зберігаємо ім'я та прізвище менеджера
-      })
-      .catch((error: AxiosError) => {
-        setError("Помилка при отриманні даних користувача");
-        console.error(error);
-      });
-
-    // Якщо roomId є, то ми редагуємо існуючий номер
     if (roomId) {
       axios
         .get(`http://localhost:5000/rooms/${roomId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response: AxiosResponse<Room>) => {
-          // Типізуємо response
-          setFormState(response.data); // Завантажуємо номер для редагування
+          setFormState(response.data);
         })
         .catch((error: AxiosError) => {
-          // Типізуємо error
           setError("Не вдалося завантажити номер для редагування");
           console.error(error);
         });
     } else {
-      // Якщо roomId немає, це для додавання нового номера
       setFormState({
         id: 0,
         name: "",
@@ -64,73 +44,99 @@ const ManageRoomsPage = () => {
         price: 0,
         available_from: "",
         available_to: "",
+        photo_url: "", // Додано фото_url для нових номерів
       });
     }
 
-    // Отримання всіх номерів для перегляду
     axios
       .get("http://localhost:5000/rooms", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response: AxiosResponse<Room[]>) => {
-        // Типізуємо response
         setRooms(response.data);
       })
       .catch((error: AxiosError) => {
-        // Типізуємо error
         setError("Не вдалося завантажити номери");
         console.error(error);
       });
   }, [navigate, roomId]);
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
+const handleFormSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const token = localStorage.getItem("token");
 
-    if (!formState || !token) return;
+  if (!formState || !token) return;
 
-    try {
-      const {
-        id,
-        name,
-        description,
-        capacity,
-        price,
-        available_from,
-        available_to,
-      } = formState;
-      let response: AxiosResponse<Room>;
+  const formData = new FormData();
+  if (selectedPhoto) {
+    formData.append("photo", selectedPhoto); // Додаємо фото до FormData
+    console.log('FormData перед відправкою:', formData); // Перевірка
+  }
 
-      if (id && id !== 0) {
-        // Якщо є id, редагуємо номер
-        response = await axios.put(
-          `http://localhost:5000/rooms/${id}`,
-          { name, description, capacity, price, available_from, available_to },
-          { headers: { Authorization: `Bearer ${token}` } }
+  try {
+    let response: AxiosResponse<Room>;
+    const { id, name, description, capacity, price, available_from, available_to } = formState;
+
+    // Створення або редагування номера
+    if (id && id !== 0) {
+      // Редагування номера
+      response = await axios.put(
+        `http://localhost:5000/rooms/${id}`,
+        { name, description, capacity, price, available_from, available_to },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } else {
+      // Додавання нового номера
+      response = await axios.post(
+        "http://localhost:5000/rooms",
+        { name, description, capacity, price, available_from, available_to },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    }
+
+    // Якщо фото додається, відправляємо його на сервер
+    if (selectedPhoto && response.data.id) {
+      await axios.post(
+        `http://localhost:5000/upload-photo/${response.data.id}`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
+      );
+
+      // Оновлюємо список номерів з новим фото
+      setRooms((prevRooms) => {
+        return prevRooms.map((room) =>
+          room.id === response.data.id ? { ...room, photo_url: `/uploads/rooms/${response.data.id}.png` } : room
         );
+      });
+    }
 
-        // Оновлюємо відповідний номер у списку
-        setRooms((prevRooms) =>
-          prevRooms.map((room) =>
-            room.id === id ? { ...room, ...response.data } : room
-          )
-        );
-      } else {
-        // Якщо id немає, додаємо новий номер
-        response = await axios.post(
-          "http://localhost:5000/rooms",
-          { name, description, capacity, price, available_from, available_to },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+    // Очищаємо форму і оновлюємо стан
+    setFormState(null);
+    setRooms([...rooms, response.data]); // Оновлення списку номерів
+    window.location.reload(); // Оновлюємо сторінку
 
-        setRooms([...rooms, response.data]);
-      }
+  } catch (error) {
+    setError("Не вдалося зберегти зміни");
+    console.error(error);
+  }
+};
 
-      // Очищаємо форму після збереження
-      setFormState(null);
-    } catch (error) {
-      setError("Не вдалося зберегти зміни");
-      console.error(error);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "capacity" || name === "price") {
+      if (!/^\d*$/.test(value)) return;
+    }
+
+    if (formState) {
+      setFormState({ ...formState, [name]: value });
+    }
+  };
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedPhoto(file); // Оновлюємо вибране фото
     }
   };
 
@@ -151,43 +157,16 @@ const ManageRoomsPage = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    // Перевірка для полів, де ми хочемо лише цифри
-    if (name === "capacity" || name === "price") {
-      // Дозволяємо вводити лише цифри
-      if (!/^\d*$/.test(value)) return;
-    }
-
-    if (formState) {
-      setFormState({ ...formState, [name]: value });
-    }
-  };
-
-  // Функція для форматування дати
   const formatDate = (date: string) => {
     const formattedDate = new Date(date);
-    return formattedDate.toLocaleDateString('uk-UA'); // Форматуємо за допомогою української локалі
+    return formattedDate.toLocaleDateString("uk-UA");
   };
 
   return (
     <div>
-      {user ? (
-        <h1>
-          Вітаємо, {user.first_name} {user.last_name}!
-        </h1> // Вітання для менеджера
-      ) : (
-        <p>Завантаження...</p>
-      )}
-
-      {roomId ? (
-        <h1>Редагувати номер</h1>
-      ) : (
-        <h2>Ви можете керувати номерами готелю:</h2> // Назва сторінки замість "Додати новий номер"
-      )}
-
       {error && <div className="error">{error}</div>}
+
+      <h1>{roomId ? "Редагувати номер" : "Додати новий номер"}</h1>
 
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">
@@ -256,6 +235,12 @@ const ManageRoomsPage = () => {
           />
         </div>
 
+        {/* Поле для завантаження фото */}
+        <div className="form-group">
+          <label htmlFor="photo">Завантажити фото:</label>
+          <input type="file" id="photo" onChange={handlePhotoChange} />
+        </div>
+
         <button type="submit">
           {formState?.id ? "Зберегти зміни" : "Додати номер"}
         </button>
@@ -283,6 +268,16 @@ const ManageRoomsPage = () => {
             <p>
               <strong>Доступний до:</strong> {formatDate(room.available_to)}
             </p>
+
+            {/* Відображення фото */}
+            {room.photo_url && (
+              <img
+                src={`http://localhost:5000${room.photo_url}`}
+                alt="Room"
+                style={{ width: "100px", height: "100px" }}
+              />
+            )}
+
             <button onClick={() => setFormState(room)}>Редагувати</button>
             <button onClick={() => handleDelete(room.id)}>Видалити</button>
           </li>

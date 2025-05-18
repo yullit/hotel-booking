@@ -1,4 +1,3 @@
-// src/pages/RoomsPage.tsx
 import React, { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 
@@ -121,6 +120,13 @@ const RoomsPage = () => {
         {finalFilteredRooms.map((room) => (
           <li key={room.id}>
             <p>{room.name} - {room.price} грн/добу</p>
+            {room.photo_url && (
+              <img
+                src={`http://localhost:5000${room.photo_url}`}
+                alt={room.name}
+                style={{ width: '200px', height: '150px', objectFit: 'cover' }}
+              />
+            )}
             <Link to={`/rooms/${room.id}`}>
               <button>Переглянути номер</button>
             </Link>

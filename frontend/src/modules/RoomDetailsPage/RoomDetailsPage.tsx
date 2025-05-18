@@ -80,6 +80,18 @@ const RoomDetailsPage = () => {
       <p>Ціна: {room.price} грн/день</p>
       <p>Місткість: {room.capacity} осіб</p>
 
+      {/* Відображення фото номера */}
+      {room.photo_url && (
+        <div>
+          <h3>Фото номеру:</h3>
+          <img
+            src={`http://localhost:5000${room.photo_url}`}
+            alt={room.name}
+            style={{ width: "300px", height: "200px", objectFit: "cover" }}
+          />
+        </div>
+      )}
+
       <div>
         <label>Дата заїзду:</label>
         <input

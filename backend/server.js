@@ -4,6 +4,10 @@ const { Client } = require("pg");
 const jwt = require("jsonwebtoken"); // Для авторизації
 const bcrypt = require("bcryptjs"); // Для хешування паролів
 const cors = require("cors"); // Імпортуємо cors
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
 require("dotenv").config(); // Завантажуємо змінні середовища з .env
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Використовуємо ключ з .env
 
@@ -125,7 +129,7 @@ app.post("/login", async (req, res) => {
 app.get("/rooms", async (req, res) => {
   try {
     const result = await client.query(
-      "SELECT id, name, description, capacity, price, available_from, available_to FROM rooms WHERE is_deleted = false"
+      "SELECT id, name, description, capacity, price, available_from, available_to, photo_url FROM rooms WHERE is_deleted = false"
     );
     res.json(result.rows); // Відправляємо список доступних кімнат
   } catch (err) {
@@ -133,6 +137,7 @@ app.get("/rooms", async (req, res) => {
     res.status(500).send({ message: "Помилка при отриманні кімнат" });
   }
 });
+
 
 // Створення нового бронювання
 // Створення нового бронювання
@@ -171,7 +176,7 @@ app.get("/user/bookings", async (req, res) => {
 
     // Оновлений запит, який також вибирає поле total_amount
     const result = await client.query(
-      `SELECT b.id, r.name, r.price, r.capacity, r.description, b.check_in, b.check_out, b.total_amount
+      `SELECT b.id, r.name, r.price, r.capacity, r.description, b.check_in, b.check_out, b.total_amount, r.photo_url
        FROM bookings b
        JOIN rooms r ON b.room_id = r.id
        WHERE b.user_id = $1 AND r.is_deleted = false`,
@@ -192,7 +197,7 @@ app.get("/rooms/:id", async (req, res) => {
   const { id } = req.params; // Отримуємо id з параметрів маршруту
   try {
     const result = await client.query(
-      "SELECT * FROM rooms WHERE id = $1 AND is_deleted = false",
+      "SELECT id, name, description, capacity, price, available_from, available_to, photo_url FROM rooms WHERE id = $1 AND is_deleted = false",
       [id]
     );
     if (result.rows.length === 0) {
@@ -204,6 +209,7 @@ app.get("/rooms/:id", async (req, res) => {
     res.status(500).send({ message: "Помилка при отриманні номеру" });
   }
 });
+
 
 // Скасування бронювання
 app.delete("/user/bookings/:bookingId", async (req, res) => {
@@ -240,20 +246,22 @@ app.delete("/user/bookings/:bookingId", async (req, res) => {
 
 // Додавання нового номера
 app.post("/rooms", verifyRole("manager"), async (req, res) => {
-  const { name, description, capacity, price, available_from, available_to } =
-    req.body;
+  const { name, description, capacity, price, available_from, available_to } = req.body;
 
   try {
     const result = await client.query(
       "INSERT INTO rooms (name, description, capacity, price, available_from, available_to, is_deleted) VALUES ($1, $2, $3, $4, $5, $6, false) RETURNING *",
       [name, description, capacity, price, available_from, available_to]
     );
-    res.status(201).json(result.rows[0]); // Повертаємо дані нового номера
+
+    const newRoom = result.rows[0]; // Новий номер
+    res.status(201).json(newRoom); // Повертаємо новий номер з ID
   } catch (err) {
     console.error(err);
     res.status(500).send("Помилка при додаванні номера");
   }
 });
+
 
 // Редагування номера
 app.put("/rooms/:id", verifyRole("manager"), async (req, res) => {
@@ -398,6 +406,49 @@ app.post("/check-availability", async (req, res) => {
     res.status(500).send({ message: "Помилка при перевірці доступності" });
   }
 });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Віддаємо фото з папки uploads
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = './uploads/rooms'; // Папка для фото
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true }); // Створення папки, якщо вона не існує
+      console.log('Папка uploads/rooms була створена'); // Лог для перевірки
+    }
+    cb(null, dir); // Вказуємо директорію для збереження файлів
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // Генерація унікального імені для фото
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Завантаження фото
+app.post('/upload-photo/:roomId', upload.single('photo'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('Фото не було завантажено');
+  }
+
+  const { roomId } = req.params; // Отримуємо ID номера
+  const photoUrl = `/uploads/rooms/${req.file.filename}`; // Формуємо URL для фото
+
+  console.log('Отримано фото:', req.file); // Для перевірки, чи прийшло фото
+
+  try {
+    // Оновлення бази даних: додаємо шлях до фото в поле photo_url
+    await client.query(
+      'UPDATE rooms SET photo_url = $1 WHERE id = $2',
+      [photoUrl, roomId]
+    );
+    res.json({ message: 'Фото завантажено успішно', photoUrl });
+  } catch (err) {
+    console.error('Помилка при оновленні фото:', err);
+    res.status(500).send('Помилка при завантаженні фото');
+  }
+});
+
 
 
 // Запуск сервера
