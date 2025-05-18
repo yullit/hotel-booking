@@ -3,6 +3,7 @@
 
 // Контейнер для форми
 .auth-form-container {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,6 +93,7 @@ p button {
   border: none;
   cursor: pointer;
   text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 p button:hover {

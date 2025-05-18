@@ -1,66 +1,199 @@
-/* Основні стилі для Hero Section */
+@import '../../styles/variables.scss';
+
+.home-page {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
 .hero-image {
-  background-image: url("../../../public/images/apartment-classic/apartment-classic-1.png"); /* Шлях до вашого фонового зображення */
+  background-image: url("../../../public/images/apartment-classic/apartment-classic-1.png");
   background-size: cover;
   background-position: center;
-  height: 100vh;
-  width: 100%;
+  width: 100%; /* Використовуємо 100% ширини контейнера */
+  height: 100vh; /* Висота секції на весь екран */
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: white;
-  padding: 0 20px;
+  color: $white-color;
+  position: relative;
+  overflow: hidden; /* Забезпечуємо, що нічого не виходить за межі */
+}
 
-  .hero-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 1000px;
-    padding: 20px;
+
+// Hero Content
+.hero-content {
+  max-width: 600px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.booking-form label {
+  font-size: 1.2rem;
+}
+
+.booking-form input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+}
+
+.booking-form button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: $primary-color;
+  color: $white-color;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.booking-form button:hover {
+  background-color: darken($primary-color, 10%);
+}
+
+.carousel-section {
+  margin: 50px 0;
+}
+
+.info-section {
+  text-align: center;
+  padding: 60px 20px;
+  color: $text-color; /* Колір тексту */
+  border-radius: 8px; /* Округлені кути */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Легка тінь для об'єму */
+}
+
+.info-section h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: $primary-color; /* Колір заголовка */
+  margin-bottom: 20px;
+}
+
+.info-section p {
+  font-size: 1.125rem;
+  color: #666; /* Світло-сірий текст */
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto; /* Центруємо текст */
+}
+
+@media (max-width: 768px) {
+  .info-section {
+    padding: 40px 15px;
+  }
+
+  .info-section h2 {
+    font-size: 1.75rem;
+  }
+
+  .info-section p {
+    font-size: 1rem;
   }
 }
 
-/* Стилі для секції інформації */
-.info-section {
-  padding: 40px;
-  background-color: #f4f4f4;
-  text-align: center;
-  margin-top: -20px;
-}
 
-/* Стилі для секції функцій */
 .features-section {
   display: flex;
-  justify-content: space-around;
-  padding: 40px 0;
+  justify-content: space-between;
+  padding: 50px 20px;
+  background-color: #f4f4f9;
+  flex-wrap: wrap; /* Додаємо можливість переходу елементів на новий рядок при маленьких екранах */
+}
+
+.feature-item {
+  flex: 1;
+  text-align: center;
+  padding: 30px;
+  margin: 10px;
+  background-color: $white-color; /* Білий фон для кожного елемента */
+  border-radius: 8px; /* Округлені кути */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Легка тінь для об'ємності */
+  transition: transform 0.3s, box-shadow 0.3s; /* Анімація на ховер */
+}
+
+.feature-item h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $primary-color; /* Основний колір для заголовків */
+  margin-bottom: 15px;
+}
+
+.feature-item p {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.feature-item:hover {
+  transform: translateY(-10px); /* Піднімаємо елемент при ховері */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Збільшуємо тінь при ховері */
+}
+
+@media (max-width: 768px) {
+  .features-section {
+    flex-direction: column; /* Розміщуємо елементи вертикально на менших екранах */
+    align-items: center;
+  }
 
   .feature-item {
-    width: 30%;
-    text-align: center;
+    flex: unset;
+    width: 100%; /* Розтягуємо елементи на всю ширину */
+    margin-bottom: 20px; /* Додаємо відступ між елементами */
   }
 }
 
-/* Стилі для кнопки Call to Action */
+
 .cta-section {
   display: flex;
   justify-content: center;
-  padding: 40px 0;
+  padding: 30px;
+}
+
+.cta-button {
+  padding: 15px 30px;
+  font-size: 18px;
+  color: #fff;
+  background-color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #555;
+}
+
+@media (max-width: 768px) {
+  
+  .hero-image {
+    width: 100%;
+    height: 50vh;
+  }
+
+  .hero-content {
+    margin: 0 10px;
+  }
 
   .cta-button {
-    background-color: #4219d0;
-    color: white;
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: #3541b4;
-    }
+    font-size: 16px;
+    padding: 12px 25px;
   }
 }

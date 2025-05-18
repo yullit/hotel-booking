@@ -6,21 +6,24 @@
   padding: 0;
   box-sizing: border-box;
 }
-
+html, body {
+  width: 100%;
+}
 body {
+  width: 100%; /* Забезпечуємо, що body займає всю ширину */
   font-family: 'Arial', sans-serif;
   background-color: $background-color;
   color: $text-color;
-  min-height: 100vh; // Задаємо мінімальну висоту для body, щоб не було прокручування
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-// Гарантуємо, що на всю висоту екрану працює flex
 .app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%; /* Забезпечуємо, щоб основний контейнер розтягувався на всю ширину */
 }
 
 .main {
@@ -29,25 +32,23 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  width: 100%; /* Розтягуємо основний контейнер на всю ширину */
 }
 
 .container {
-  max-width: 1200px;
-  width: 100%;
-  padding: 20px;
-  margin-top: 20px; // Додаємо маленький верхній відступ для відокремлення від інших елементів
-  margin-bottom: 20px; // Додаємо нижній відступ для кращої організації простору
-}
+  width: 100%; /* Видаляємо max-width, щоб контейнер не обмежував ширину */
 
+
+  margin-bottom: 20px;
+}
 
 footer {
   padding: 20px;
   background-color: $secondary-color;
   color: $white-color;
   text-align: center;
-  margin-top: auto; // Це забезпечить, щоб футер завжди був внизу
-  min-height: 100px;  // Мінімальна висота футера, щоб він не стискався
+  margin-top: auto;
+  min-height: 100px;
 }
 
 footer a {
@@ -60,11 +61,6 @@ footer a:hover {
 }
 
 // Адаптивність для планшетів і телефонів
-@media (max-width: 1200px) {
-  .container {
-    padding: 10px;
-  }
-}
 
 @media (max-width: 768px) {
   .header {
@@ -85,10 +81,6 @@ footer a:hover {
   footer p {
     font-size: 12px;
   }
-
-  .main {
-    padding: 10px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -98,9 +90,5 @@ footer a:hover {
 
   nav ul li a {
     font-size: 14px;
-  }
-
-  .container {
-    padding: 5px;
   }
 }

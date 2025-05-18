@@ -1,8 +1,9 @@
 // src/pages/HomePage.tsx
 import React, { useState } from "react";
-import './HomePage.scss';
-import { useNavigate } from 'react-router-dom';
-import Carousel from './components/Carousel/Carousel';
+import "./HomePage.scss";
+import { useNavigate } from "react-router-dom";
+import Carousel from "./components/Carousel/Carousel";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
@@ -31,7 +32,13 @@ const HomePage = () => {
       <div className="hero-image">
         <div className="hero-content">
           <h1>Готель "Baza"</h1>
-          <form className="booking-form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          <form
+            className="booking-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
             <label htmlFor="checkInDate">Дата заїзду</label>
             <input
               type="date"
@@ -44,7 +51,9 @@ const HomePage = () => {
             <input
               type="date"
               id="checkOutDate"
-              value={checkOutDate ? checkOutDate.toISOString().split("T")[0] : ""}
+              value={
+                checkOutDate ? checkOutDate.toISOString().split("T")[0] : ""
+              }
               onChange={handleCheckOutDateChange}
               required
             />
@@ -71,7 +80,7 @@ const HomePage = () => {
           <p>У нас ви знайдете сучасні номери з стильним інтер'єром.</p>
         </div>
         <div className="feature-item">
-          <h3>Комфорт</h3>
+          <h3>Комфорт в усьому</h3>
           <p>Ми гарантуємо комфорт та зручність для наших гостей.</p>
         </div>
         <div className="feature-item">
@@ -82,7 +91,11 @@ const HomePage = () => {
 
       {/* Call to Action */}
       <div className="cta-section">
-        <button className="cta-button">Забронювати номер</button>
+        <Link to="/rooms">
+          {" "}
+          {/* Використовуємо Link для навігації */}
+          <button className="cta-button">Забронювати номер</button>
+        </Link>
       </div>
     </div>
   );
