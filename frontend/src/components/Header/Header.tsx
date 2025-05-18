@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';  // Імпортуємо AuthContext
@@ -43,21 +42,22 @@ const Header = () => {
       <nav>
         <ul>
           {/* Якщо користувач не є менеджером, відображаємо посилання на Номери */}
-          {!isManager && <li><Link to="/rooms">Номери</Link></li>}
-          <li><Link to="/contacts">Контакти</Link></li>
+          {!isManager && <li><Link to="/rooms" className="nav-link">Номери</Link></li>}
+          <li><Link to="/contacts" className="nav-link">Контакти</Link></li>
           {token ? (
             <>
               {isManager ? (
-                <li><Link to="/manage-rooms">Управління номерами</Link></li>
+                <li><Link to="/manage-rooms" className="nav-link">Управління номерами</Link></li>
               ) : (
-                <li><Link to="/dashboard">Особистий кабінет</Link></li>
+                <li><Link to="/dashboard" className="nav-link">Особистий кабінет</Link></li>
               )}
               <li>
-                <button onClick={handleLogout} className="logout-button">Вийти</button>
+                <button onClick={handleLogout} className="nav-link-button">Вийти</button> {/* Тепер "Вийти" виглядає як кнопка */}
               </li>
             </>
           ) : (
-            <li><Link to="/login">Увійти</Link></li>
+            <li><Link to="/login" className="nav-link-button">Увійти</Link> {/* "Увійти" також виглядає як кнопка */}
+            </li>
           )}
         </ul>
       </nav>
