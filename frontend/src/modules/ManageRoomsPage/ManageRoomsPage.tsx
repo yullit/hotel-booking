@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Room } from "../../types/Room";
+import './ManageRoomsPage.scss';
 
 const ManageRoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -162,11 +163,12 @@ const handleFormSubmit = async (e: React.FormEvent) => {
     return formattedDate.toLocaleDateString("uk-UA");
   };
 
-  return (
-    <div>
-      {error && <div className="error">{error}</div>}
+return (
+  <div className="manage-rooms-page">
+    {error && <div className="error">{error}</div>}
 
-      <h1>{roomId ? "Редагувати номер" : "Додати новий номер"}</h1>
+    <div className="form-section">
+      <h2>{roomId ? "Редагувати номер" : "Додати новий номер"}</h2>
 
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">
@@ -235,7 +237,6 @@ const handleFormSubmit = async (e: React.FormEvent) => {
           />
         </div>
 
-        {/* Поле для завантаження фото */}
         <div className="form-group">
           <label htmlFor="photo">Завантажити фото:</label>
           <input type="file" id="photo" onChange={handlePhotoChange} />
@@ -245,46 +246,36 @@ const handleFormSubmit = async (e: React.FormEvent) => {
           {formState?.id ? "Зберегти зміни" : "Додати номер"}
         </button>
       </form>
+    </div>
 
+    <div className="room-list-section">
       <h3>Доступні номери:</h3>
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>
-            <p>
-              <strong>Назва:</strong> {room.name}
-            </p>
-            <p>
-              <strong>Ціна:</strong> {room.price} грн
-            </p>
-            <p>
-              <strong>Місткість:</strong> {room.capacity}
-            </p>
-            <p>
-              <strong>Опис:</strong> {room.description}
-            </p>
-            <p>
-              <strong>Доступний з:</strong> {formatDate(room.available_from)}
-            </p>
-            <p>
-              <strong>Доступний до:</strong> {formatDate(room.available_to)}
-            </p>
+            <p><strong>Назва:</strong> {room.name}</p>
+            <p><strong>Ціна:</strong> {room.price} грн</p>
+            <p><strong>Місткість:</strong> {room.capacity}</p>
+            <p><strong>Опис:</strong> {room.description}</p>
+            <p><strong>Доступний з:</strong> {formatDate(room.available_from)}</p>
+            <p><strong>Доступний до:</strong> {formatDate(room.available_to)}</p>
 
-            {/* Відображення фото */}
             {room.photo_url && (
-              <img
-                src={`http://localhost:5000${room.photo_url}`}
-                alt="Room"
-                style={{ width: "100px", height: "100px" }}
-              />
+              <img src={`http://localhost:5000${room.photo_url}`} alt="Room" />
             )}
 
-            <button onClick={() => setFormState(room)}>Редагувати</button>
-            <button onClick={() => handleDelete(room.id)}>Видалити</button>
+            <div className="actions">
+              <button onClick={() => setFormState(room)}>Редагувати</button>
+              <button onClick={() => handleDelete(room.id)}>Видалити</button>
+            </div>
           </li>
         ))}
       </ul>
     </div>
-  );
+  </div>
+);
+
+
 };
 
 export default ManageRoomsPage;
