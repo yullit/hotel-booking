@@ -13,10 +13,6 @@
   margin-right: auto; // Центруємо футер
 }
 
-.footer p {
-  font-size: 14px;
-}
-
 .footer a {
   color: $white-color;
   text-decoration: none;
@@ -30,15 +26,5 @@
 @media (max-width: 768px) {
   .footer {
     padding: 8px 15px; // Зменшуємо відступи для маленьких екранів
-  }
-
-  .footer p {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer p {
-    font-size: 10px;
   }
 }

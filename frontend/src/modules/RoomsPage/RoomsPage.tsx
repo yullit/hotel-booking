@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+import "./RoomsPage.scss";
 
 const RoomsPage = () => {
   const [rooms, setRooms] = useState<any[]>([]);
@@ -26,7 +27,11 @@ const RoomsPage = () => {
   }, []);
 
   // Функція для порівняння дат
-  const isRoomAvailable = (room: any, checkInDate: Date, checkOutDate: Date) => {
+  const isRoomAvailable = (
+    room: any,
+    checkInDate: Date,
+    checkOutDate: Date
+  ) => {
     const roomAvailableFrom = new Date(room.available_from).getTime();
     const roomAvailableTo = new Date(room.available_to).getTime();
     const checkInTime = checkInDate.getTime();
@@ -38,7 +43,9 @@ const RoomsPage = () => {
 
   const filterRoomsByAvailability = (rooms: any[]) => {
     if (checkInDate && checkOutDate) {
-      return rooms.filter((room) => isRoomAvailable(room, checkInDate, checkOutDate));
+      return rooms.filter((room) =>
+        isRoomAvailable(room, checkInDate, checkOutDate)
+      );
     }
     return rooms;
   };
@@ -73,7 +80,9 @@ const RoomsPage = () => {
     return rooms;
   };
 
-  const handleCapacityFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCapacityFilterChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setCapacityFilter(e.target.value);
   };
 
@@ -84,58 +93,69 @@ const RoomsPage = () => {
   };
 
   return (
-    <div>
-      <h2>Номери</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="rooms-page">
+      <div className="rooms-wrapper">
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <div>
-        <label htmlFor="sortOrder">Сортувати за ціною: </label>
-        <select
-          id="sortOrder"
-          value={sortOrder}
-          onChange={handleSortChange}
-        >
-          <option value="none" disabled={sortOrder !== "none"}>Обрати</option>
-          <option value="asc">За зростанням</option>
-          <option value="desc">За спаданням</option>
-        </select>
+        <div className="filters">
+          <div className="filter-group">
+            <label htmlFor="sortOrder">Сортувати за ціною</label>
+            <select
+              id="sortOrder"
+              value={sortOrder}
+              onChange={handleSortChange}
+            >
+              <option value="none" disabled={sortOrder !== "none"}>
+                Обрати
+              </option>
+              <option value="asc">За зростанням</option>
+              <option value="desc">За спаданням</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="capacityFilter">Фільтрувати за місткістю</label>
+            <select
+              id="capacityFilter"
+              value={capacityFilter}
+              onChange={handleCapacityFilterChange}
+            >
+              <option value="">Обрати місткість</option>
+              <option value="1">1 особа</option>
+              <option value="2">2 особи</option>
+              <option value="3">3 особи</option>
+              <option value="4">4 особи</option>
+            </select>
+          </div>
+        </div>
+
+        <ul>
+          {finalFilteredRooms.map((room) => (
+            <li key={room.id}>
+              <p>
+                {room.name} - {room.price} грн/доба
+              </p>
+
+              {room.photo_url && (
+                <div className="image-wrapper">
+                  <img
+                    src={`http://localhost:5000${room.photo_url}`}
+                    alt={room.name}
+                  />
+                </div>
+              )}
+
+              <Link to={`/rooms/${room.id}`}>
+                <button>Переглянути номер</button>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <button className="go-back" onClick={goBackToHomePage}>
+          Обрати інші дати
+        </button>
       </div>
-
-      <div>
-        <label htmlFor="capacityFilter">Фільтрувати за місткістю: </label>
-        <select
-          id="capacityFilter"
-          value={capacityFilter}
-          onChange={handleCapacityFilterChange}
-        >
-          <option value="">Обрати місткість</option>
-          <option value="1">1 особа</option>
-          <option value="2">2 особи</option>
-          <option value="3">3 особи</option>
-          <option value="4">4 особи</option>
-        </select>
-      </div>
-
-      <ul>
-        {finalFilteredRooms.map((room) => (
-          <li key={room.id}>
-            <p>{room.name} - {room.price} грн/добу</p>
-            {room.photo_url && (
-              <img
-                src={`http://localhost:5000${room.photo_url}`}
-                alt={room.name}
-                style={{ width: '200px', height: '150px', objectFit: 'cover' }}
-              />
-            )}
-            <Link to={`/rooms/${room.id}`}>
-              <button>Переглянути номер</button>
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      {/* Кнопка для повернення на сторінку вибору дат */}
-      <button onClick={goBackToHomePage}>Обрати інші дати</button>
     </div>
   );
 };

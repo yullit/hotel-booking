@@ -36,14 +36,13 @@ const Header = () => {
     <header className="header">
       <div className="logo">
         <Link to="/" className="logo-link">
-          <h1>Готель "Не хуйня"</h1>
+          <h2>Готель "Не хуйня"</h2>
         </Link>
       </div>
       <nav>
         <ul>
           {/* Якщо користувач не є менеджером, відображаємо посилання на Номери */}
           {!isManager && <li><Link to="/rooms" className="nav-link">Номери</Link></li>}
-          <li><Link to="/contacts" className="nav-link">Контакти</Link></li>
           {token ? (
             <>
               {isManager ? (

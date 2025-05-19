@@ -27,7 +27,6 @@
 // Стилізація заголовка
 h2 {
   text-align: center;
-  font-size: 24px;
   color: $text-color;
   margin-bottom: 20px;
 }
@@ -37,7 +36,6 @@ h2 {
 }
 
 label {
-  font-size: 14px;
   color: $text-color;
   display: block;
   margin-bottom: 5px;
@@ -46,7 +44,6 @@ label {
 input {
   width: 100%;
   padding: 10px;
-  font-size: 16px;
   border: 1px solid $border-color;
   border-radius: 5px;
   margin-bottom: 10px;
@@ -65,7 +62,6 @@ button {
   padding: 12px;
   background-color: $button-background;
   color: $button-text-color;
-  font-size: 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -83,7 +79,6 @@ button:disabled {
 
 p {
   text-align: center;
-  font-size: 14px;
   margin-top: 40px;  // Відступ перед текстом під формою
 }
 
@@ -103,7 +98,6 @@ p button:hover {
 // Стилізація для повідомлення про помилки
 .error-message {
   color: $red-color;
-  font-size: 14px;
   margin-top: 5px;
   padding: 8px;
   border-radius: 4px;
@@ -127,50 +121,17 @@ p button:hover {
   .auth-form {
     padding: 20px;
   }
-
-  h2 {
-    font-size: 22px;
-  }
-
-  label {
-    font-size: 12px;
-  }
-
-  input {
-    font-size: 14px;
-  }
-
-  button {
-    font-size: 14px;
-  }
 }
 
 @media (max-width: 480px) {
   .auth-form {
     padding: 15px;
   }
-
-  h2 {
-    font-size: 20px;
-  }
-
-  input {
-    font-size: 13px;
-  }
-
-  button {
-    font-size: 14px;
-  }
-
-  p {
-    font-size: 12px;
-  }
 }
 
 // Стилізація для загальних повідомлень про помилки
 .error-message-global {
   color: $red-color;
-  font-size: 16px;
   background-color: rgba(255, 0, 0, 0.1);  // Легкий фон для акценту
   padding: 10px;
   border-radius: 5px;

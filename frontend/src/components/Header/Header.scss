@@ -26,9 +26,10 @@
   text-align: center;
 }
 
-h1 {
-  font-size: 24px;
-  font-weight: 600;
+
+.logo h2 {
+  margin: 0; // прибирає дефолтний margin
+  padding: 0;
 }
 
 nav {
