@@ -1,0 +1,105 @@
+@import "../../styles/variables.scss";
+
+.booking-page {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  .booking-container {
+    max-width: 600px;
+    width: 100%;
+    padding: 40px 30px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .total-price {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    .payment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      label {
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .card-element-wrapper {
+        padding: 12px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        margin-bottom: 20px;
+      }
+
+      .card-error {
+        color: red;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: -10px;
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        background-color: $primary-color;
+        color: $white-color;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+
+        &:disabled {
+          background-color: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .success-message {
+      margin-top: 20px;
+      color: green;
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .booking-container {
+      padding: 30px 20px;
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .total-price {
+        font-size: 14px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
