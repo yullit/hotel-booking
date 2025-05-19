@@ -77,7 +77,7 @@ const RoomDetailsPage = () => {
   return (
     <div className="room-details-page">
       <div className="room-container">
-        <h2>{room.name}</h2>
+        <h3>{room.name}</h3>
 
         {room.photo_url && (
           <div className="image-wrapper">

@@ -1,0 +1,122 @@
+@import "../../styles/variables.scss";
+
+.dashboard-page {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  .dashboard-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    padding: 0 20px;
+
+    .greeting {
+      text-align: center;
+      margin: 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .error-text {
+      color: red;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .no-bookings {
+      text-align: center;
+      color: #888;
+    }
+
+    .booking-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: center; // Центруємо картки по горизонталі
+    }
+
+    .booking-container {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      padding: 12px;
+      text-align: center;
+      width: 100%;
+      max-width: 850px; // ⚡ Обмежуємо ширину картки
+
+      .image-wrapper {
+        width: 100%;
+        aspect-ratio: 4 / 1.6; // Зменшено співвідношення
+        overflow: hidden;
+        border-radius: 10px;
+        margin-bottom: 12px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+      }
+
+      .info {
+        margin-bottom: 12px;
+
+        h3 {
+          margin: 0;
+          font-size: 18px;
+        }
+
+        .description {
+          margin: 4px 0;
+          font-size: 14px;
+          color: $text-color;
+        }
+
+        .info-line {
+          margin: 2px 0;
+          font-size: 14px;
+        }
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+
+        button {
+          padding: 8px 14px;
+          font-size: 14px;
+          border: none;
+          border-radius: 6px;
+          background-color: $primary-color;
+          color: $white-color;
+          cursor: pointer;
+          transition: background-color 0.3s;
+
+          &:hover {
+            background-color: darken($primary-color, 10%);
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dashboard-wrapper {
+      padding: 0 12px;
+
+      .booking-container {
+        padding: 12px;
+
+        .actions button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './Dashboard.scss';
 
 const Dashboard = () => {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -90,57 +91,58 @@ const Dashboard = () => {
     return formattedDate.toLocaleDateString("uk-UA"); // Форматуємо за допомогою української локалі
   };
 
-  return (
-    <div>
-      <h1>Особистий кабінет</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+return (
+  <div className="dashboard-page">
+    <div className="dashboard-wrapper">
+      {error && <p className="error-text">{error}</p>}
 
       {user ? (
-        <h1>
-          Вітаємо, {user.first_name} {user.last_name}
-        </h1>
+        <h2 className="greeting">
+          Вітаємо, {user.first_name} {user.last_name}!
+        </h2>
       ) : (
         <p>Завантаження...</p>
       )}
 
-      <h2>Ваші бронювання</h2>
-      <ul>
-        {Array.isArray(bookings) ? (
-          bookings.map((booking) => (
-            <li key={booking.id}>
-              <p>Номер: {booking.name}</p>
-              <p>Опис: {booking.description}</p>
-              <p>Місткість: {booking.capacity} осіб</p>
-              <p>Дата заїзду: {formatDate(booking.check_in)}</p>
-              <p>Дата виїзду: {formatDate(booking.check_out)}</p>
-              <p>
-                Загальна сума:{" "}
-                {booking.total_amount
-                  ? booking.total_amount + " грн"
-                  : "Немає суми"}{" "}
-              </p>{" "}
-              {/* Перевірка наявності total_amount */}
+      <h3 className="section-title">Ваші бронювання:</h3>
 
-              {/* Відображення фото номера */}
+      {bookings.length > 0 ? (
+        <div className="booking-list">
+          {bookings.map((booking) => (
+            <div key={booking.id} className="booking-container">
               {booking.photo_url && (
-                <img
-                  src={`http://localhost:5000${booking.photo_url}`}
-                  alt={booking.name}
-                  style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                />
+                <div className="image-wrapper">
+                  <img
+                    src={`http://localhost:5000${booking.photo_url}`}
+                    alt={booking.name}
+                  />
+                </div>
               )}
 
-              <button onClick={() => handleCancelBooking(booking.id)}>
-                Скасувати бронювання
-              </button>
-            </li>
-          ))
-        ) : (
-          <p>Немає бронювань</p>
-        )}
-      </ul>
+              <div className="info">
+                <h3>{booking.name}</h3>
+                <p className="description">{booking.description}</p>
+                <p className="info-line">Місткість: {booking.capacity} осіб</p>
+                <p className="info-line">Дата заїзду: {formatDate(booking.check_in)}</p>
+                <p className="info-line">Дата виїзду: {formatDate(booking.check_out)}</p>
+                <p className="info-line">Сума: {booking.total_amount || "Немає суми"} грн</p>
+              </div>
+
+              <div className="actions">
+                <button onClick={() => handleCancelBooking(booking.id)}>
+                  Скасувати бронювання
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="no-bookings">У вас немає бронювань</p>
+      )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Dashboard;
