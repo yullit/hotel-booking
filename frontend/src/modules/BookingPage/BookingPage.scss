@@ -17,10 +17,14 @@
     text-align: center;
 
     h2 {
+      font-size: 24px;
+      font-weight: 800;
       margin-bottom: 20px;
     }
 
     .total-price {
+      font-size: 16px;
+      font-weight: 600;
       margin-bottom: 30px;
     }
 
@@ -31,6 +35,8 @@
 
       label {
         text-align: left;
+        font-weight: 600;
+        font-size: 14px;
         margin-bottom: 4px;
       }
 
@@ -44,6 +50,8 @@
 
       .card-error {
         color: red;
+        font-size: 14px;
+        font-weight: 500;
         margin-top: -10px;
         margin-bottom: 20px;
         text-align: left;
@@ -55,6 +63,7 @@
         border-radius: 8px;
         background-color: $primary-color;
         color: $white-color;
+        font-weight: 600;
         cursor: pointer;
         transition: background-color 0.3s;
 
@@ -72,12 +81,21 @@
     .success-message {
       margin-top: 20px;
       color: green;
+      font-weight: 600;
     }
   }
 
   @media (max-width: 480px) {
     .booking-container {
       padding: 30px 20px;
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .total-price {
+        font-size: 14px;
+      }
 
       button {
         width: 100%;
