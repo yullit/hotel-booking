@@ -59,20 +59,18 @@ nav ul li a.nav-link {
     color: $primary-color;
   }
 }
-a.nav-link-button {
-  text-decoration: none;
-}
-// Стилі для кнопок "Увійти" і "Вийти"
+
 .nav-link-button,
 .logout-button {
   background-color: $button-background;
   color: $button-text-color;
-  border: none; // ❌ Прибрали рамку
+  border: none;
   cursor: pointer;
   font-size: 16px;
   padding: 8px 20px;
   border-radius: 6px;
   transition: background-color 0.3s, color 0.3s;
+  text-decoration: none;
 
   &:hover {
     background-color: $button-hover-background;
@@ -80,18 +78,36 @@ a.nav-link-button {
   }
 }
 
+// Підсвітка активної сторінки
+.nav-link.active,
+.nav-link-button.active {
+  background-color: rgba($primary-color, 0.1);
+  color: $primary-color;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 8px 20px;
+}
+
+
+
+
+// Адаптив
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px 0;
+    padding: 6px 10px;
   }
 
   .logo {
     width: 100%;
-    margin-bottom: 0;
+    margin-bottom: 6px;
     justify-content: center;
+  }
+
+  .logo h2 {
+    font-size: 20px;
   }
 
   nav {
@@ -103,15 +119,17 @@ a.nav-link-button {
     flex-direction: column;
     width: 100%;
     align-items: center;
+    gap: 6px;
   }
 
   nav ul li {
-    margin: 10px 0;
+    margin: 4px 0;
   }
 
-  nav ul li a,
+  nav ul li a.nav-link,
   .nav-link-button,
   .logout-button {
-    font-size: 18px;
+    font-size: 14px;
+    padding: 6px 16px;
   }
 }

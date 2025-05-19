@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';  // Імпортуємо AuthContext
+import { NavLink, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 import './Header.scss';
 
 const Header = () => {
@@ -18,7 +18,6 @@ const Header = () => {
     navigate('/login');
   };
 
-  // Перевірка ролі, чи є менеджер
   const decodedToken = token ? token.split(".")[1] : null;
   let decodedPayload;
   if (decodedToken) {
@@ -35,27 +34,65 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/" className="logo-link">
+        <NavLink to="/" className="logo-link">
           <h2>Готель "Комфорт"</h2>
-        </Link>
+        </NavLink>
       </div>
       <nav>
         <ul>
-          {/* Якщо користувач не є менеджером, відображаємо посилання на Номери */}
-          {!isManager && <li><Link to="/rooms" className="nav-link">Номери</Link></li>}
+          {!isManager && (
+            <li>
+              <NavLink
+                to="/rooms"
+                className={({ isActive }) =>
+                  isActive ? 'nav-link active' : 'nav-link'
+                }
+              >
+                Номери
+              </NavLink>
+            </li>
+          )}
           {token ? (
             <>
               {isManager ? (
-                <li><Link to="/manage-rooms" className="nav-link">Управління номерами</Link></li>
+                <li>
+                  <NavLink
+                    to="/manage-rooms"
+                    className={({ isActive }) =>
+                      isActive ? 'nav-link active' : 'nav-link'
+                    }
+                  >
+                    Управління номерами
+                  </NavLink>
+                </li>
               ) : (
-                <li><Link to="/dashboard" className="nav-link">Особистий кабінет</Link></li>
+                <li>
+                  <NavLink
+                    to="/dashboard"
+                    className={({ isActive }) =>
+                      isActive ? 'nav-link active' : 'nav-link'
+                    }
+                  >
+                    Особистий кабінет
+                  </NavLink>
+                </li>
               )}
               <li>
-                <button onClick={handleLogout} className="nav-link-button">Вийти</button> {/* Тепер "Вийти" виглядає як кнопка */}
+                <button onClick={handleLogout} className="nav-link-button">
+                  Вийти
+                </button>
               </li>
             </>
           ) : (
-            <li><Link to="/login" className="nav-link-button">Увійти</Link> {/* "Увійти" також виглядає як кнопка */}
+            <li>
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  isActive ? 'nav-link-button active' : 'nav-link-button'
+                }
+              >
+                Увійти
+              </NavLink>
             </li>
           )}
         </ul>
