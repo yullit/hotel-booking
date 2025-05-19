@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Room } from "../../types/Room"; // Тип Room
+import "./RoomDetailsPage.scss";
 
 const RoomDetailsPage = () => {
   const { id } = useParams();
@@ -74,53 +75,70 @@ const RoomDetailsPage = () => {
   if (!room) return <p>Завантаження номеру...</p>;
 
   return (
-    <div>
-      <h2>{room.name}</h2>
-      <p>{room.description}</p>
-      <p>Ціна: {room.price} грн/день</p>
-      <p>Місткість: {room.capacity} осіб</p>
+    <div className="room-details-page">
+      <div className="room-container">
+        <h2>{room.name}</h2>
 
-      {/* Відображення фото номера */}
-      {room.photo_url && (
-        <div>
-          <h3>Фото номеру:</h3>
-          <img
-            src={`http://localhost:5000${room.photo_url}`}
-            alt={room.name}
-            style={{ width: "300px", height: "200px", objectFit: "cover" }}
-          />
+        {room.photo_url && (
+          <div className="image-wrapper">
+            <img
+              src={`http://localhost:5000${room.photo_url}`}
+              alt={room.name}
+            />
+          </div>
+        )}
+
+        <p className="description">{room.description}</p>
+        <p className="info">Ціна: {room.price} грн/добу</p>
+        <p className="info">Місткість: {room.capacity} осіб</p>
+
+        <div className="date-inputs">
+          <div className="input-group">
+            <label>Дата заїзду:</label>
+            <input
+              type="date"
+              onChange={(e) => setCheckInDate(e.target.value)}
+            />
+          </div>
+          <div className="input-group">
+            <label>Дата виїзду:</label>
+            <input
+              type="date"
+              onChange={(e) => setCheckOutDate(e.target.value)}
+            />
+          </div>
         </div>
-      )}
 
-      <div>
-        <label>Дата заїзду:</label>
-        <input
-          type="date"
-          onChange={(e) => setCheckInDate(e.target.value)}
-        />
+        <div className="actions">
+          {available === null && (
+            <button className="check" onClick={checkAvailability}>
+              Перевірити доступність
+            </button>
+          )}
+
+          {available !== null && available && (
+            <>
+              <p className="available-text">
+                Номер вільний для бронювання на обрані вами дати
+              </p>
+              <button onClick={handleBooking}>Забронювати</button>
+            </>
+          )}
+
+          {available !== null && !available && (
+            <>
+              <p className="not-available">Номер не доступний</p>
+              <button onClick={goBackToRooms}>Повернутись до номерів</button>
+            </>
+          )}
+
+          {available !== null && (
+            <button className="check-again" onClick={() => setAvailable(null)}>
+              Перевірити інші дати
+            </button>
+          )}
+        </div>
       </div>
-      <div>
-        <label>Дата виїзду:</label>
-        <input
-          type="date"
-          onChange={(e) => setCheckOutDate(e.target.value)}
-        />
-      </div>
-
-      <button onClick={checkAvailability}>Перевірити доступність</button>
-
-      {/* Якщо номер недоступний, заміняємо кнопку на текст і додаємо кнопку для повернення */}
-      {available !== null && !available && (
-        <>
-          <p style={{ color: "red" }}>Номер не доступний</p>
-          <button onClick={goBackToRooms}>Повернутись до номерів</button>
-        </>
-      )}
-
-      {/* Якщо номер доступний, показуємо кнопку для бронювання */}
-      {available !== null && available && (
-        <button onClick={handleBooking}>Забронювати</button>
-      )}
     </div>
   );
 };

@@ -153,7 +153,7 @@ const RoomsPage = () => {
         </ul>
 
         <button className="go-back" onClick={goBackToHomePage}>
-          Обрати інші дати
+          Обрати дати
         </button>
       </div>
     </div>
