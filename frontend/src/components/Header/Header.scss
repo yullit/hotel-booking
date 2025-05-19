@@ -5,8 +5,8 @@
   padding: 10px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between; /* За замовчуванням для великих екранів */
-  align-items: center; /* Центруємо елементи по висоті */
+  justify-content: space-between;
+  align-items: center;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -22,125 +22,96 @@
 
 .logo-link {
   text-decoration: none;
-  color: #333;
+  color: $text-color;
   text-align: center;
 }
 
-
 .logo h2 {
-  margin: 0; // прибирає дефолтний margin
+  margin: 0;
   padding: 0;
 }
 
 nav {
   display: flex;
-  justify-content: flex-end; /* За замовчуванням меню праворуч */
-  align-items: center; /* Вирівнювання по висоті */
+  justify-content: flex-end;
+  align-items: center;
 }
 
 nav ul {
   list-style: none;
   display: flex;
-  justify-content: flex-end; /* За замовчуванням пункти меню вирівняні праворуч */
+  justify-content: flex-end;
   padding: 0;
-  align-items: center; /* Вирівнювання елементів по висоті */
+  margin: 0;
+  align-items: center;
 }
 
 nav ul li {
   margin-left: 20px;
 }
 
-nav ul li a {
+nav ul li a.nav-link {
   text-decoration: none;
-  color: #333;
-}
+  color: $text-color;
+  font-size: 16px;
 
-nav ul li a:hover {
-  color: #007BFF; /* Синій колір для активного елемента */
+  &:hover {
+    color: $primary-color;
+  }
 }
-
+a.nav-link-button {
+  text-decoration: none;
+}
+// Стилі для кнопок "Увійти" і "Вийти"
+.nav-link-button,
 .logout-button {
-  background: none;
-  border: 1px solid #007BFF; /* Рамка з синім кольором */
-  color: #007BFF; /* Синій колір тексту */
+  background-color: $button-background;
+  color: $button-text-color;
+  border: none; // ❌ Прибрали рамку
   cursor: pointer;
-  padding: 8px 20px; /* Відступи */
-  border-radius: 5px; /* Округлені кути */
-  transition: background-color 0.3s, color 0.3s; /* Анімація для фону та кольору */
-}
+  font-size: 16px;
+  padding: 8px 20px;
+  border-radius: 6px;
+  transition: background-color 0.3s, color 0.3s;
 
-.logout-button:hover {
-  background-color: #007BFF; /* Синій фон при наведенні */
-  color: #fff; /* Білий текст при наведенні */
+  &:hover {
+    background-color: $button-hover-background;
+    color: $white-color;
+  }
 }
 
 @media (max-width: 768px) {
   .header {
-    flex-direction: column; /* Вертикальний лейаут для маленьких екранів */
-    align-items: center; /* Центруємо елементи по вертикалі */
-    justify-content: center; /* Центруємо по горизонталі */
-    padding: 10px 0; /* Меньші відступи */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
   }
 
   .logo {
-    width: 100%; /* Логотип займає всю ширину */
-    margin-bottom: 0px; /* Відступ між логотипом та навігацією */
-    justify-content: center; /* Центруємо логотип */
+    width: 100%;
+    margin-bottom: 0;
+    justify-content: center;
   }
 
   nav {
-    justify-content: center; /* Центруємо навігацію по горизонталі */
+    justify-content: center;
     width: 100%;
   }
 
   nav ul {
-    flex-direction: column; /* Вертикальний лейаут для меню */
+    flex-direction: column;
     width: 100%;
-    align-items: center; /* Центруємо пункти меню по горизонталі */
-    padding: 0;
+    align-items: center;
   }
 
   nav ul li {
-    margin: 10px 0; /* Відступи між елементами навігації */
+    margin: 10px 0;
   }
 
-  nav ul li a {
-    font-size: 18px; /* Трохи більший шрифт для мобільних */
-  }
-
+  nav ul li a,
+  .nav-link-button,
   .logout-button {
-    font-size: 18px; /* Трохи більший шрифт для мобільних */
+    font-size: 18px;
   }
-}
-
-.nav-link-button {
-  color: #fff; /* Білий текст при наведенні */
-  background: $button-background;
-  border: 1px solid #007BFF; /* Рамка з синім кольором */
-  cursor: pointer;
-  font-size: 16px;
-  padding: 8px 20px; /* Відступи */
-  border-radius: 5px; /* Округлені кути */
-  transition: background-color 0.3s, color 0.3s; /* Анімація для фону та кольору */
-}
-
-.nav-link-button:hover {
-  background-color: $button-hover-background; /* Синій фон при наведенні */
-  color: #fff; /* Білий текст при наведенні */
-}
-
-.logout-button {
-  background: none;
-  border: 1px solid #007BFF; /* Рамка з синім кольором */
-  color: #007BFF; /* Синій колір тексту */
-  cursor: pointer;
-  font-size: 16px;
-  padding: 8px 20px; /* Відступи */
-  border-radius: 5px; /* Округлені кути */
-  transition: background-color 0.3s, color 0.3s; /* Анімація для фону та кольору */
-}
-
-.logout-button:hover {
-  background-color: #007BFF; /* Синій фон при наведенні */
-  color: #fff; /* Білий текст при наведенні */
 }

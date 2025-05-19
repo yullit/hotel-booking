@@ -36,7 +36,7 @@ const Header = () => {
     <header className="header">
       <div className="logo">
         <Link to="/" className="logo-link">
-          <h2>Готель "Не хуйня"</h2>
+          <h2>Готель "Комфорт"</h2>
         </Link>
       </div>
       <nav>

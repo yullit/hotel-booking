@@ -85,10 +85,12 @@
       }
 
       .actions {
+        width: 100%;
         display: flex;
         justify-content: center;
 
         button {
+          max-width: 200px;
           padding: 8px 14px;
           font-size: 14px;
           border: none;
