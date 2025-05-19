@@ -168,7 +168,8 @@ return (
     {error && <div className="error">{error}</div>}
 
     <div className="form-section">
-      <h2>{roomId ? "Редагувати номер" : "Додати новий номер"}</h2>
+      <h2>{formState?.id && formState.id !== 0 ? "Редагувати номер" : "Додати новий номер"}</h2>
+
 
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">

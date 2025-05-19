@@ -9,7 +9,7 @@
 
   .form-section {
     background-color: #fff;
-    padding: 24px;
+    padding: 16px 24px;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     width: 100%;
@@ -19,7 +19,7 @@
 
     h2 {
       text-align: center;
-      margin: 0 0 16px 0;
+      margin: 0 0 12px 0;
     }
 
     form {
@@ -30,18 +30,16 @@
       .form-group {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 2px;
 
         label {
-          font-size: 14px;
           color: $text-color;
         }
 
         input {
-          padding: 10px 14px;
+          padding: 8px 12px;
           border-radius: 8px;
           border: 1px solid #ccc;
-          font-size: 14px;
 
           &:focus {
             border-color: $primary-color;
