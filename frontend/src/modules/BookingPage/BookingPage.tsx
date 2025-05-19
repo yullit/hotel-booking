@@ -78,8 +78,7 @@ const BookingPage = () => {
       case "Your card was declined.":
         return "Картку відхилено. Спробуйте іншу або зверніться до банку.";
       default:
-  return "Оплата відхилена: недостатньо коштів на картці.";
-
+        return "Оплата відхилена: недостатньо коштів на картці.";
     }
   };
 
@@ -96,14 +95,17 @@ const BookingPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/create-payment-intent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ amount: totalPrice }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/create-payment-intent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ amount: totalPrice }),
+        }
+      );
 
       const { clientSecret } = await response.json();
       const cardElement = elements.getElement(CardNumberElement);
@@ -112,9 +114,12 @@ const BookingPage = () => {
         return;
       }
 
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: cardElement },
-      });
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: { card: cardElement },
+        }
+      );
 
       if (error) {
         setErrorMessage(translateCardError(error.message || ""));
@@ -133,7 +138,9 @@ const BookingPage = () => {
           }),
         })
           .then(() => {
-            setSuccessMessage("Бронювання успішне! Ви будете перенаправлені в особистий кабінет");
+            setSuccessMessage(
+              "Бронювання успішне! Ви будете перенаправлені в особистий кабінет"
+            );
             setPaymentSuccess(true);
             setTimeout(() => navigate("/dashboard"), 3000);
           })
@@ -155,80 +162,82 @@ const BookingPage = () => {
         <h2>Бронювання номеру: {room.name}</h2>
         <p className="total-price">Загальна сума до оплати: {totalPrice} грн</p>
 
-<form className="payment-form" onSubmit={handlePayment} noValidate>
-  <label htmlFor="card-number">Номер картки:</label>
-  <div className="card-element-wrapper">
-    <CardNumberElement
-      id="card-number"
-      onChange={(e) => {
-        setCardNumberComplete(e.complete);
-        if (e.error) {
-          setCardNumberError(translateCardError(e.error.message));
-        } else {
-          setCardNumberError(null);
-        }
-      }}
-      options={{ showIcon: true, disableLink: true }}
-    />
-  </div>
-  {cardNumberError && <p className="card-error">{cardNumberError}</p>}
+        <form className="payment-form" onSubmit={handlePayment} noValidate>
+          <label htmlFor="card-number">Номер картки:</label>
+          <div className="card-element-wrapper">
+            <CardNumberElement
+              id="card-number"
+              onChange={(e) => {
+                setCardNumberComplete(e.complete);
+                if (e.error) {
+                  setCardNumberError(translateCardError(e.error.message));
+                } else {
+                  setCardNumberError(null);
+                }
+              }}
+              options={{ showIcon: true, disableLink: true }}
+            />
+          </div>
+          {cardNumberError && <p className="card-error">{cardNumberError}</p>}
 
-  <label htmlFor="card-expiry">Термін дії:</label>
-  <div className="card-element-wrapper">
-    <CardExpiryElement
-      id="card-expiry"
-      onChange={(e) => {
-        setCardExpiryComplete(e.complete);
-        if (e.error) {
-          setCardExpiryError(translateCardError(e.error.message));
-        } else {
-          setCardExpiryError(null);
-        }
-      }}
-    />
-  </div>
-  {cardExpiryError && <p className="card-error">{cardExpiryError}</p>}
+          <label htmlFor="card-expiry">Термін дії:</label>
+          <div className="card-element-wrapper">
+            <CardExpiryElement
+              id="card-expiry"
+              onChange={(e) => {
+                setCardExpiryComplete(e.complete);
+                if (e.error) {
+                  setCardExpiryError(translateCardError(e.error.message));
+                } else {
+                  setCardExpiryError(null);
+                }
+              }}
+            />
+          </div>
+          {cardExpiryError && <p className="card-error">{cardExpiryError}</p>}
 
-  <label htmlFor="card-cvc">CVV:</label>
-  <div className="card-element-wrapper">
-    <CardCvcElement
-      id="card-cvc"
-      onChange={(e) => {
-        setCardCvcComplete(e.complete);
-        if (e.error) {
-          setCardCvcError(translateCardError(e.error.message));
-        } else {
-          setCardCvcError(null);
-        }
-      }}
-    />
-  </div>
-  {cardCvcError && <p className="card-error">{cardCvcError}</p>}
+          <label htmlFor="card-cvc">CVV:</label>
+          <div className="card-element-wrapper">
+            <CardCvcElement
+              id="card-cvc"
+              onChange={(e) => {
+                setCardCvcComplete(e.complete);
+                if (e.error) {
+                  setCardCvcError(translateCardError(e.error.message));
+                } else {
+                  setCardCvcError(null);
+                }
+              }}
+            />
+          </div>
+          {cardCvcError && <p className="card-error">{cardCvcError}</p>}
 
-  <button
-    type="submit"
-    disabled={
-      loading ||
-      !stripe ||
-      !elements ||
-      !cardNumberComplete ||
-      !cardExpiryComplete ||
-      !cardCvcComplete ||
-      !!cardNumberError ||
-      !!cardExpiryError ||
-      !!cardCvcError
-    }
-  >
-    {loading ? "Зачекайте..." : "Оплатити та підтвердити бронювання"}
-  </button>
+          <button
+            type="submit"
+            disabled={
+              loading ||
+              !stripe ||
+              !elements ||
+              !cardNumberComplete ||
+              !cardExpiryComplete ||
+              !cardCvcComplete ||
+              !!cardNumberError ||
+              !!cardExpiryError ||
+              !!cardCvcError
+            }
+          >
+            {loading ? "Зачекайте..." : "Оплатити та підтвердити бронювання"}
+          </button>
 
-  {errorMessage && (
-    <p className="card-error" style={{ marginTop: "10px", textAlign: "center" }}>
-      {errorMessage}
-    </p>
-  )}
-</form>
-
+          {errorMessage && (
+            <p
+              className="card-error"
+              style={{ marginTop: "10px", textAlign: "center" }}
+            >
+              {errorMessage}
+            </p>
+          )}
+        </form>
 
         {paymentSuccess && successMessage && (
           <p className="success-message">{successMessage}</p>

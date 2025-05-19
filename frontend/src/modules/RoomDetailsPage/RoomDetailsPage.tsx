@@ -89,19 +89,20 @@ const RoomDetailsPage = () => {
         )}
 
         <p className="description">{room.description}</p>
-        <p className="info">Ціна: {room.price} грн/добу</p>
-        <p className="info">Місткість: {room.capacity} осіб</p>
+        <p className="info"><strong>Ціна:</strong> {room.price} грн/добу</p>
+        <p className="info"><strong>Місткість:</strong> {room.capacity} осіб</p>
+
 
         <div className="date-inputs">
           <div className="input-group">
-            <label>Дата заїзду:</label>
+            <label><strong>Дата заїзду:</strong></label>
             <input
               type="date"
               onChange={(e) => setCheckInDate(e.target.value)}
             />
           </div>
           <div className="input-group">
-            <label>Дата виїзду:</label>
+            <label><strong>Дата виїзду:</strong></label>
             <input
               type="date"
               onChange={(e) => setCheckOutDate(e.target.value)}

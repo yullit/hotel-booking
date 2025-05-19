@@ -16,24 +16,27 @@ const CarouselComponent = () => {
       >
         <div>
           <img
-            src="/images/apartment-classic/apartment-classic-1.png"
+            src="/images/carousel/carousel-1.jpg"
             alt="1"
           />
-          <p className="legend"></p>
         </div>
         <div>
           <img
-            src="/images/apartment-classic/apartment-classic-1.png"
+            src="/images/carousel/carousel-2.jpg"
             alt="2"
           />
-          <p className="legend"></p>
         </div>
         <div>
           <img
-            src="/images/apartment-classic/apartment-classic-1.png"
+            src="/images/carousel/carousel-3.jpg"
             alt="3"
           />
-          <p className="legend"></p>
+        </div>
+        <div>
+          <img
+            src="/images/carousel/carousel-4.jpg"
+            alt="3"
+          />
         </div>
       </Carousel>
     </div>

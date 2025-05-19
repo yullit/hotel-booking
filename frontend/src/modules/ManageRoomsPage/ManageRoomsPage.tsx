@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Room } from "../../types/Room";
-import './ManageRoomsPage.scss';
+import "./ManageRoomsPage.scss";
 
 const ManageRoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -62,66 +62,79 @@ const ManageRoomsPage = () => {
       });
   }, [navigate, roomId]);
 
-const handleFormSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const token = localStorage.getItem("token");
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
 
-  if (!formState || !token) return;
+    if (!formState || !token) return;
 
-  const formData = new FormData();
-  if (selectedPhoto) {
-    formData.append("photo", selectedPhoto); // Додаємо фото до FormData
-    console.log('FormData перед відправкою:', formData); // Перевірка
-  }
-
-  try {
-    let response: AxiosResponse<Room>;
-    const { id, name, description, capacity, price, available_from, available_to } = formState;
-
-    // Створення або редагування номера
-    if (id && id !== 0) {
-      // Редагування номера
-      response = await axios.put(
-        `http://localhost:5000/rooms/${id}`,
-        { name, description, capacity, price, available_from, available_to },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } else {
-      // Додавання нового номера
-      response = await axios.post(
-        "http://localhost:5000/rooms",
-        { name, description, capacity, price, available_from, available_to },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    const formData = new FormData();
+    if (selectedPhoto) {
+      formData.append("photo", selectedPhoto); // Додаємо фото до FormData
+      console.log("FormData перед відправкою:", formData); // Перевірка
     }
 
-    // Якщо фото додається, відправляємо його на сервер
-    if (selectedPhoto && response.data.id) {
-      await axios.post(
-        `http://localhost:5000/upload-photo/${response.data.id}`,
-        formData,
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
-      );
+    try {
+      let response: AxiosResponse<Room>;
+      const {
+        id,
+        name,
+        description,
+        capacity,
+        price,
+        available_from,
+        available_to,
+      } = formState;
 
-      // Оновлюємо список номерів з новим фото
-      setRooms((prevRooms) => {
-        return prevRooms.map((room) =>
-          room.id === response.data.id ? { ...room, photo_url: `/uploads/rooms/${response.data.id}.png` } : room
+      // Створення або редагування номера
+      if (id && id !== 0) {
+        // Редагування номера
+        response = await axios.put(
+          `http://localhost:5000/rooms/${id}`,
+          { name, description, capacity, price, available_from, available_to },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-      });
+      } else {
+        // Додавання нового номера
+        response = await axios.post(
+          "http://localhost:5000/rooms",
+          { name, description, capacity, price, available_from, available_to },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+
+      // Якщо фото додається, відправляємо його на сервер
+      if (selectedPhoto && response.data.id) {
+        await axios.post(
+          `http://localhost:5000/upload-photo/${response.data.id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        // Оновлюємо список номерів з новим фото
+        setRooms((prevRooms) => {
+          return prevRooms.map((room) =>
+            room.id === response.data.id
+              ? { ...room, photo_url: `/uploads/rooms/${response.data.id}.png` }
+              : room
+          );
+        });
+      }
+
+      // Очищаємо форму і оновлюємо стан
+      setFormState(null);
+      setRooms([...rooms, response.data]); // Оновлення списку номерів
+      window.location.reload(); // Оновлюємо сторінку
+    } catch (error) {
+      setError("Не вдалося зберегти зміни");
+      console.error(error);
     }
-
-    // Очищаємо форму і оновлюємо стан
-    setFormState(null);
-    setRooms([...rooms, response.data]); // Оновлення списку номерів
-    window.location.reload(); // Оновлюємо сторінку
-
-  } catch (error) {
-    setError("Не вдалося зберегти зміни");
-    console.error(error);
-  }
-};
-
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -163,120 +176,136 @@ const handleFormSubmit = async (e: React.FormEvent) => {
     return formattedDate.toLocaleDateString("uk-UA");
   };
 
-return (
-  <div className="manage-rooms-page">
-    {error && <div className="error">{error}</div>}
+  return (
+    <div className="manage-rooms-page">
+      {error && <div className="error">{error}</div>}
 
-    <div className="form-section">
-      <h2>{formState?.id && formState.id !== 0 ? "Редагувати номер" : "Додати новий номер"}</h2>
+      <div className="form-section">
+        <h2>
+          {formState?.id && formState.id !== 0
+            ? "Редагувати номер"
+            : "Додати новий номер"}
+        </h2>
 
+        <form onSubmit={handleFormSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Назва номера:</label>
+            <input
+              type="text"
+              name="name"
+              value={formState?.name || ""}
+              onChange={handleInputChange}
+              id="name"
+            />
+          </div>
 
-      <form onSubmit={handleFormSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Назва номера:</label>
-          <input
-            type="text"
-            name="name"
-            value={formState?.name || ""}
-            onChange={handleInputChange}
-            id="name"
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="description">Опис номера:</label>
+            <input
+              type="text"
+              name="description"
+              value={formState?.description || ""}
+              onChange={handleInputChange}
+              id="description"
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="description">Опис номера:</label>
-          <input
-            type="text"
-            name="description"
-            value={formState?.description || ""}
-            onChange={handleInputChange}
-            id="description"
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="capacity">Кількість осіб:</label>
+            <input
+              type="text"
+              name="capacity"
+              value={formState?.capacity || ""}
+              onChange={handleInputChange}
+              id="capacity"
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="capacity">Місткість:</label>
-          <input
-            type="text"
-            name="capacity"
-            value={formState?.capacity || ""}
-            onChange={handleInputChange}
-            id="capacity"
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="price">Ціна:</label>
+            <input
+              type="text"
+              name="price"
+              value={formState?.price || ""}
+              onChange={handleInputChange}
+              id="price"
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="price">Ціна:</label>
-          <input
-            type="text"
-            name="price"
-            value={formState?.price || ""}
-            onChange={handleInputChange}
-            id="price"
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="available_from">Доступний з:</label>
+            <input
+              type="date"
+              name="available_from"
+              value={formState?.available_from || ""}
+              onChange={handleInputChange}
+              id="available_from"
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="available_from">Доступний з:</label>
-          <input
-            type="date"
-            name="available_from"
-            value={formState?.available_from || ""}
-            onChange={handleInputChange}
-            id="available_from"
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="available_to">Доступний до:</label>
+            <input
+              type="date"
+              name="available_to"
+              value={formState?.available_to || ""}
+              onChange={handleInputChange}
+              id="available_to"
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="available_to">Доступний до:</label>
-          <input
-            type="date"
-            name="available_to"
-            value={formState?.available_to || ""}
-            onChange={handleInputChange}
-            id="available_to"
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="photo">Завантажити фото:</label>
+            <input type="file" id="photo" onChange={handlePhotoChange} />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="photo">Завантажити фото:</label>
-          <input type="file" id="photo" onChange={handlePhotoChange} />
-        </div>
+          <button type="submit">
+            {formState?.id ? "Зберегти зміни" : "Додати номер"}
+          </button>
+        </form>
+      </div>
 
-        <button type="submit">
-          {formState?.id ? "Зберегти зміни" : "Додати номер"}
-        </button>
-      </form>
+      <div className="room-list-section">
+        <h3>Доступні номери:</h3>
+        <ul>
+          {rooms.map((room) => (
+            <li key={room.id}>
+              {room.photo_url && (
+                <img
+                  src={`http://localhost:5000${room.photo_url}`}
+                  alt="Room"
+                />
+              )}
+
+              <p>
+                <strong>Назва:</strong> {room.name}
+              </p>
+              <p>
+                <strong>Ціна:</strong> {room.price} грн
+              </p>
+              <p>
+                <strong>Кількість осіб:</strong> {room.capacity}
+              </p>
+              <p>
+                <strong>Опис:</strong> {room.description}
+              </p>
+              <p>
+                <strong>Доступний з:</strong> {formatDate(room.available_from)}
+              </p>
+              <p>
+                <strong>Доступний до:</strong> {formatDate(room.available_to)}
+              </p>
+
+              <div className="actions">
+                <button onClick={() => setFormState(room)}>Редагувати</button>
+                <button onClick={() => handleDelete(room.id)}>Видалити</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-
-    <div className="room-list-section">
-      <h3>Доступні номери:</h3>
-      <ul>
-        {rooms.map((room) => (
-          <li key={room.id}>
-            <p><strong>Назва:</strong> {room.name}</p>
-            <p><strong>Ціна:</strong> {room.price} грн</p>
-            <p><strong>Місткість:</strong> {room.capacity}</p>
-            <p><strong>Опис:</strong> {room.description}</p>
-            <p><strong>Доступний з:</strong> {formatDate(room.available_from)}</p>
-            <p><strong>Доступний до:</strong> {formatDate(room.available_to)}</p>
-
-            {room.photo_url && (
-              <img src={`http://localhost:5000${room.photo_url}`} alt="Room" />
-            )}
-
-            <div className="actions">
-              <button onClick={() => setFormState(room)}>Редагувати</button>
-              <button onClick={() => handleDelete(room.id)}>Видалити</button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </div>
-);
-
-
+  );
 };
 
 export default ManageRoomsPage;

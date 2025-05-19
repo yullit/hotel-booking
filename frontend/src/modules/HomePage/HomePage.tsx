@@ -31,7 +31,7 @@ const HomePage = () => {
       {/* Hero Image Section */}
       <div className="hero-image">
         <div className="hero-content">
-          <h1>Готель "Baza"</h1>
+          <h2>Час відпочивати!</h2>
           <form
             className="booking-form"
             onSubmit={(e) => {

@@ -122,10 +122,10 @@ return (
               <div className="info">
                 <h3>{booking.name}</h3>
                 <p className="description">{booking.description}</p>
-                <p className="info-line">Місткість: {booking.capacity} осіб</p>
-                <p className="info-line">Дата заїзду: {formatDate(booking.check_in)}</p>
-                <p className="info-line">Дата виїзду: {formatDate(booking.check_out)}</p>
-                <p className="info-line">Сума: {booking.total_amount || "Немає суми"} грн</p>
+                <p className="info-line"><strong>Кількість осіб:</strong> {booking.capacity}</p>
+                <p className="info-line"><strong>Дата заїзду:</strong> {formatDate(booking.check_in)}</p>
+                <p className="info-line"><strong>Дата виїзду:</strong> {formatDate(booking.check_out)}</p>
+                <p className="info-line"><strong>Сума:</strong> {booking.total_amount || "Немає суми"} грн</p>
               </div>
 
               <div className="actions">
