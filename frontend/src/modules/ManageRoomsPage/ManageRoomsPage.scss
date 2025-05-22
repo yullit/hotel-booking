@@ -4,42 +4,54 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 0;
+  padding: 20px;
   width: 100%;
 
+  .error {
+    color: red;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
   .form-section {
+    position: relative;
     background-color: #fff;
-    padding: 16px 24px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    width: 100%;
-    max-width: 850px;
-    box-sizing: border-box;
+    padding: 24px;
     margin-bottom: 40px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    max-width: 600px;
 
     h2 {
       text-align: center;
-      margin: 0 0 12px 0;
+      margin-bottom: 20px;
+      font-size: 22px;
     }
 
     form {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 16px;
 
       .form-group {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
 
         label {
+          font-weight: 600;
+          font-size: 14px;
           color: $text-color;
         }
 
         input {
-          padding: 8px 12px;
+          padding: 10px 12px;
           border-radius: 8px;
           border: 1px solid #ccc;
+          font-size: 14px;
+          transition: border-color 0.2s;
 
           &:focus {
             border-color: $primary-color;
@@ -49,24 +61,18 @@
         }
       }
 
-      .submit-wrapper {
-        display: flex;
-        justify-content: center;
-        margin-top: 12px;
+      button[type="submit"] {
+        padding: 10px 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: $primary-color;
+        color: $white-color;
+        cursor: pointer;
+        transition: background-color 0.3s;
 
-        button {
-          padding: 8px 14px;
-          font-size: 14px;
-          border: none;
-          border-radius: 6px;
-          background-color: $primary-color;
-          color: $white-color;
-          cursor: pointer;
-          transition: background-color 0.3s;
-
-          &:hover {
-            background-color: darken($primary-color, 10%);
-          }
+        &:hover {
+          background-color: darken($primary-color, 10%);
         }
       }
     }
@@ -74,75 +80,96 @@
 
   .room-list-section {
     width: 100%;
-    max-width: 850px;
+    max-width: 1200px;
 
     h3 {
       text-align: center;
       margin-bottom: 24px;
+      font-size: 22px;
     }
 
     ul {
       list-style: none;
       padding: 0;
       margin: 0;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
       gap: 24px;
-      align-items: center;
     }
 
     li {
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      padding: 12px;
-      text-align: center;
-      width: 100%;
-      max-width: 850px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
 
-      p {
-        margin: 4px 0;
-        font-size: 14px;
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
       }
 
       img {
-        width: 100%;
-        height: 100%;
+        width: 40%;
+        height: auto;
         object-fit: cover;
-        border-radius: 10px;
-        aspect-ratio: 4 / 1.6;
-        margin: 12px 0;
       }
 
-      .actions {
+      .details {
+        padding: 16px;
+        flex: 1;
         display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 8px;
+        flex-direction: column;
+        justify-content: space-between;
 
-        button {
-          padding: 8px 14px;
-          font-size: 14px;
-          border: none;
-          border-radius: 6px;
-          background-color: $primary-color;
-          color: $white-color;
-          cursor: pointer;
-          transition: background-color 0.3s;
+        .info {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          text-align: left;
 
-          &:hover {
-            background-color: darken($primary-color, 10%);
+          p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+
+            strong {
+              font-weight: 600;
+              margin-right: 6px;
+              display: inline;
+            }
           }
+        }
 
-          &:nth-of-type(2) {
-            background-color: #f44336;
+        .actions {
+          margin-top: 16px;
+          display: flex;
+          gap: 10px;
 
-            &:hover {
-              background-color: darken(#f44336, 10%);
+          button {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            color: $white-color;
+            transition: background-color 0.3s;
+
+            &:first-of-type {
+              background-color: $primary-color;
+
+              &:hover {
+                background-color: darken($primary-color, 10%);
+              }
+            }
+
+            &:last-of-type {
+              background-color: #f44336;
+
+              &:hover {
+                background-color: darken(#f44336, 10%);
+              }
             }
           }
         }
@@ -150,24 +177,21 @@
     }
   }
 
-  .error {
-    color: red;
-    margin-bottom: 20px;
-    font-weight: 500;
-    text-align: center;
-  }
-
-  @media (max-width: 480px) {
-    .form-section {
-      padding: 20px;
+  @media (max-width: 768px) {
+    .room-list-section ul {
+      grid-template-columns: 1fr;
     }
 
     .room-list-section li {
-      padding: 12px;
+      flex-direction: column;
 
       img {
-        max-width: 100%;
-        height: auto;
+        width: 100%;
+        height: 220px;
+      }
+
+      .details {
+        padding: 12px;
       }
 
       .actions {
@@ -178,11 +202,121 @@
         }
       }
     }
+  }
+}
 
-    .form-section form .submit-wrapper {
-      button {
-        width: 100%;
+.field-error {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #842029; /* темно-червоний */
+  background-color: #f8d7da; /* світло-червоне тло */
+  border: 1px solid #f5c6cb; /* м’яка червона обвідка */
+  border-left: 4px solid #dc3545; /* яскрава смужка праворуч */
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 6px 0 10px;
+  text-align: left;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(211, 47, 47, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.floating-message {
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(230, 249, 240, 0.95);
+  color: rgb(3, 91, 63);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+  animation: fadeInFloating 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  font-size: 16px;
+  z-index: 9999;
+  pointer-events: none;
+  max-width: 90%;
+  width: auto;
+  text-align: center;
+  border: 1px solid #b9e9d8;
+}
+
+
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-modal {
+  background-color: #fff;
+  padding: 24px 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  animation: fadeIn 0.3s ease-in-out;
+
+  p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #222;
+    font-weight: 500;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+
+    button {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .cancel-btn {
+      background-color: #c34b38;
+      color: white;
+
+      &:hover {
+        background-color: darken(#8f3b2e, 10%);
       }
     }
+
+    .keep-btn {
+      background-color: $primary-color;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+}
+
+@keyframes fadeInFloating {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
   }
 }

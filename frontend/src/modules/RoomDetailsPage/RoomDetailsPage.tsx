@@ -115,34 +115,36 @@ const RoomDetailsPage = () => {
           </div>
         </div>
 
-<div className="actions">
-  {available === null && (
-    <button className="check" onClick={checkAvailability}>
-      Перевірити доступність
-    </button>
-  )}
+        <div className="actions">
+          {available === null && (
+            <button className="check" onClick={checkAvailability}>
+              Перевірити доступність
+            </button>
+          )}
 
-  {available === true && (
-    <>
-      <p className="success-message">
-        Номер вільний для бронювання на обрані вами дати
-      </p>
-      <button onClick={handleBooking}>Забронювати</button>
-    </>
-  )}
+          {available !== null && available && (
+            <>
+              <p className="success-message">
+                Номер вільний для бронювання на обрані вами дати
+              </p>
+              <button onClick={handleBooking}>Забронювати</button>
+            </>
+          )}
 
-  {available === false && (
-    <>
-      <p className="not-available">
-        Номер не доступний на обрані вами дати
-      </p>
-      <button className="check-again" onClick={() => setAvailable(null)}>
-        Перевірити інші дати
-      </button>
-    </>
-  )}
-</div>
+          {available !== null && !available && (
+            <>
+              <p className="not-available">
+                Номер не доступний на обрані вами дати
+              </p>
+            </>
+          )}
 
+          {available !== null && (
+            <button className="check-again" onClick={() => setAvailable(null)}>
+              Перевірити інші дати
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
