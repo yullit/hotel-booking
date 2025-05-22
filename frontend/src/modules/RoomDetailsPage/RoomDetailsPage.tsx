@@ -66,10 +66,6 @@ const RoomDetailsPage = () => {
     }
   };
 
-  // Функція для повернення на сторінку Номери
-  const goBackToRooms = () => {
-    navigate("/rooms");
-  };
 
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!room) return <p>Завантаження номеру...</p>;
@@ -89,20 +85,29 @@ const RoomDetailsPage = () => {
         )}
 
         <p className="description">{room.description}</p>
-        <p className="info"><strong>Ціна:</strong> {room.price} грн/добу</p>
-        <p className="info"><strong>Місткість:</strong> {room.capacity} осіб</p>
+<p className="info">
+  <span className="info-label">Ціна:</span> {room.price} грн/добу
+</p>
+<p className="info">
+  <span className="info-label">Місткість:</span> {room.capacity} осіб
+</p>
+
 
 
         <div className="date-inputs">
           <div className="input-group">
-            <label><strong>Дата заїзду:</strong></label>
+            <label>
+              <strong>Дата заїзду:</strong>
+            </label>
             <input
               type="date"
               onChange={(e) => setCheckInDate(e.target.value)}
             />
           </div>
           <div className="input-group">
-            <label><strong>Дата виїзду:</strong></label>
+            <label>
+              <strong>Дата виїзду:</strong>
+            </label>
             <input
               type="date"
               onChange={(e) => setCheckOutDate(e.target.value)}
@@ -110,35 +115,34 @@ const RoomDetailsPage = () => {
           </div>
         </div>
 
-        <div className="actions">
-          {available === null && (
-            <button className="check" onClick={checkAvailability}>
-              Перевірити доступність
-            </button>
-          )}
+<div className="actions">
+  {available === null && (
+    <button className="check" onClick={checkAvailability}>
+      Перевірити доступність
+    </button>
+  )}
 
-          {available !== null && available && (
-            <>
-              <p className="available-text">
-                Номер вільний для бронювання на обрані вами дати
-              </p>
-              <button onClick={handleBooking}>Забронювати</button>
-            </>
-          )}
+  {available === true && (
+    <>
+      <p className="success-message">
+        Номер вільний для бронювання на обрані вами дати
+      </p>
+      <button onClick={handleBooking}>Забронювати</button>
+    </>
+  )}
 
-          {available !== null && !available && (
-            <>
-              <p className="not-available">Номер не доступний</p>
-              <button onClick={goBackToRooms}>Повернутись до номерів</button>
-            </>
-          )}
+  {available === false && (
+    <>
+      <p className="not-available">
+        Номер не доступний на обрані вами дати
+      </p>
+      <button className="check-again" onClick={() => setAvailable(null)}>
+        Перевірити інші дати
+      </button>
+    </>
+  )}
+</div>
 
-          {available !== null && (
-            <button className="check-again" onClick={() => setAvailable(null)}>
-              Перевірити інші дати
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );

@@ -95,17 +95,14 @@ const BookingPage = () => {
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/create-payment-intent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ amount: totalPrice }),
-        }
-      );
+      const response = await fetch("http://localhost:5000/create-payment-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ amount: totalPrice }),
+      });
 
       const { clientSecret } = await response.json();
       const cardElement = elements.getElement(CardNumberElement);
@@ -116,9 +113,7 @@ const BookingPage = () => {
 
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         clientSecret,
-        {
-          payment_method: { card: cardElement },
-        }
+        { payment_method: { card: cardElement } }
       );
 
       if (error) {
@@ -139,10 +134,10 @@ const BookingPage = () => {
         })
           .then(() => {
             setSuccessMessage(
-              "Бронювання успішне! Ви будете перенаправлені в особистий кабінет"
+              "Бронювання успішне!<br/> Ви будете перенаправлені в особистий кабінет"
             );
             setPaymentSuccess(true);
-            setTimeout(() => navigate("/dashboard"), 3000);
+            setTimeout(() => navigate("/dashboard"), 6000);
           })
           .catch(() => setErrorMessage("Помилка при створенні бронювання"));
       }
@@ -159,7 +154,9 @@ const BookingPage = () => {
   return (
     <div className="booking-page">
       <div className="booking-container">
-        <h2>Бронювання номеру: {room.name}</h2>
+        <h2>Бронювання номеру</h2>
+        <p className="room-name">{room.name}</p>
+
         <p className="total-price">Загальна сума до оплати: {totalPrice} грн</p>
 
         <form className="payment-form" onSubmit={handlePayment} noValidate>
@@ -169,11 +166,7 @@ const BookingPage = () => {
               id="card-number"
               onChange={(e) => {
                 setCardNumberComplete(e.complete);
-                if (e.error) {
-                  setCardNumberError(translateCardError(e.error.message));
-                } else {
-                  setCardNumberError(null);
-                }
+                setCardNumberError(e.error ? translateCardError(e.error.message) : null);
               }}
               options={{ showIcon: true, disableLink: true }}
             />
@@ -186,11 +179,7 @@ const BookingPage = () => {
               id="card-expiry"
               onChange={(e) => {
                 setCardExpiryComplete(e.complete);
-                if (e.error) {
-                  setCardExpiryError(translateCardError(e.error.message));
-                } else {
-                  setCardExpiryError(null);
-                }
+                setCardExpiryError(e.error ? translateCardError(e.error.message) : null);
               }}
             />
           </div>
@@ -202,11 +191,7 @@ const BookingPage = () => {
               id="card-cvc"
               onChange={(e) => {
                 setCardCvcComplete(e.complete);
-                if (e.error) {
-                  setCardCvcError(translateCardError(e.error.message));
-                } else {
-                  setCardCvcError(null);
-                }
+                setCardCvcError(e.error ? translateCardError(e.error.message) : null);
               }}
             />
           </div>
@@ -230,17 +215,18 @@ const BookingPage = () => {
           </button>
 
           {errorMessage && (
-            <p
-              className="card-error"
-              style={{ marginTop: "10px", textAlign: "center" }}
-            >
+            <p className="card-error" style={{ marginTop: "10px", textAlign: "center" }}>
               {errorMessage}
             </p>
           )}
         </form>
 
         {paymentSuccess && successMessage && (
-          <p className="success-message">{successMessage}</p>
+          <div
+  className="floating-message success-floating"
+  dangerouslySetInnerHTML={{ __html: successMessage || "" }}
+></div>
+
         )}
       </div>
     </div>

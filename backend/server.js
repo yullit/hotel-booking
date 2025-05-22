@@ -63,7 +63,8 @@ app.post("/register", async (req, res) => {
     );
 
     if (checkUser.rows.length > 0) {
-      return res.status(400).send("Користувач з таким email вже існує");
+      return res.status(400).json({ message: "Користувач з таким email вже існує" });
+
     }
 
     const hashedPassword = await bcrypt.hash(password, 10); // Хешуємо пароль

@@ -1,20 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext"; // Імпортуємо AuthContext
-import './AuthPage.scss'; // Імпортуємо стилі
+import { AuthContext } from "../../context/AuthContext";
+import './AuthPage.scss';
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // Поле для підтвердження пароля
-  const [firstName, setFirstName] = useState(""); // Ім'я
-  const [lastName, setLastName] = useState(""); // Прізвище
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Додаткові стейти для помилок валідації
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
@@ -24,73 +23,47 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
 
-  if (!authContext) {
-    throw new Error("AuthContext is not available");
-  }
-
+  if (!authContext) throw new Error("AuthContext is not available");
   const { login } = authContext;
 
-  // Валідація email
-  const validateEmail = (email: string) => {
-    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    return regex.test(email);
-  };
+  const validateEmail = (email: string) =>
+    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
+  const validatePassword = (password: string) => password.length >= 6;
+  const validateConfirmPassword = (p: string, c: string) => p === c;
+  const validateNameLength = (name: string) => name.trim().length >= 2;
 
-  // Валідація пароля
-  const validatePassword = (password: string) => {
-    return password.length >= 6; // Перевірка мінімальної довжини пароля
-  };
-
-  // Валідація підтвердження пароля
-  const validateConfirmPassword = (password: string, confirmPassword: string) => {
-    return password === confirmPassword;
-  };
-
-  // Валідація форми перед відправленням
   const validateForm = () => {
     let valid = true;
     if (!validateEmail(email)) {
       setEmailError("Електронна пошта повинна мати формат: user@example.com");
       valid = false;
-    } else {
-      setEmailError(null);
-    }
+    } else setEmailError(null);
 
     if (!validatePassword(password)) {
       setPasswordError("Пароль має бути не менше 6 символів.");
       valid = false;
-    } else {
-      setPasswordError(null);
-    }
+    } else setPasswordError(null);
 
     if (!isLogin && !validateConfirmPassword(password, confirmPassword)) {
       setConfirmPasswordError("Паролі не збігаються.");
       valid = false;
-    } else {
-      setConfirmPasswordError(null);
-    }
+    } else setConfirmPasswordError(null);
 
-    if (!isLogin && !firstName) {
-      setFirstNameError("Будь ласка, введіть ваше ім'я.");
+    if (!isLogin && !validateNameLength(firstName)) {
+      setFirstNameError("Ім'я має містити щонайменше 2 символи.");
       valid = false;
-    } else {
-      setFirstNameError(null);
-    }
+    } else setFirstNameError(null);
 
-    if (!isLogin && !lastName) {
-      setLastNameError("Будь ласка, введіть ваше прізвище.");
+    if (!isLogin && !validateNameLength(lastName)) {
+      setLastNameError("Прізвище має містити щонайменше 2 символи.");
       valid = false;
-    } else {
-      setLastNameError(null);
-    }
+    } else setLastNameError(null);
 
     return valid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Перевірка валідності перед відправкою
     if (!validateForm()) {
       setError("Будь ласка, виправте помилки.");
       return;
@@ -98,9 +71,10 @@ const AuthPage = () => {
 
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     const endpoint = isLogin ? "login" : "register";
-    const body = { email, password, firstName, lastName }; // Видаляємо поле username
+    const body = { email, password, firstName, lastName };
 
     try {
       const response = await fetch(`http://localhost:5000/${endpoint}`, {
@@ -109,25 +83,32 @@ const AuthPage = () => {
         body: JSON.stringify(body),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Невірний логін або пароль");
+        setError(data.message || "Невірний логін або пароль");
         return;
       }
 
-      const data = await response.json();
       login(data.token);
 
-      if (data.token) {
-        const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
-        
+      const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
+
+      if (!isLogin) {
+        setSuccessMessage("Реєстрація успішна!<br/>Вас буде перенаправлено...");
+        setTimeout(() => {
+          if (decodedToken.role === "manager") {
+            navigate("/manage-rooms");
+          } else {
+            navigate("/rooms");
+          }
+        }, 5000);
+      } else {
         if (decodedToken.role === "manager") {
           navigate("/manage-rooms");
         } else {
           navigate("/rooms");
         }
-      } else {
-        setError("Токен не отримано");
       }
     } catch (err) {
       console.error(err);
@@ -137,102 +118,103 @@ const AuthPage = () => {
     }
   };
 
-  return (
-    <div className="auth-form-container">
-      <form onSubmit={handleSubmit} className="auth-form" noValidate> {/* Забороняємо вбудовану валідацію браузера */}
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            placeholder="Введіть свою електронну пошту"
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            id="email"
-          />
-          {emailError && <div className="error-message">{emailError}</div>} {/* Показуємо помилку */}
-        </div>
+return (
+  <div className="auth-form-container">
+    <form onSubmit={handleSubmit} className="auth-form" noValidate>
+      <div className="form-group">
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="user@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        {emailError && <div className="error-message">{emailError}</div>}
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Пароль</label>
-          <input
-            placeholder="Ведіть свій пароль"
-            type="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            id="password"
-          />
-          {passwordError && <div className="error-message">{passwordError}</div>} {/* Показуємо помилку */}
-        </div>
+      <div className="form-group">
+        <label htmlFor="password">Пароль</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Введіть пароль"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {passwordError && <div className="error-message">{passwordError}</div>}
+      </div>
 
-        {/* Покажемо поле для підтвердження пароля тільки на реєстрації */}
-        {!isLogin && (
+      {!isLogin && (
+        <>
           <div className="form-group">
             <label htmlFor="confirmPassword">Підтвердьте пароль</label>
             <input
-              placeholder="Підтвердьте свій пароль"
               type="password"
-              name="confirmPassword"
+              id="confirmPassword"
+              placeholder="Повторіть ваш пароль"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              id="confirmPassword"
             />
-            {confirmPasswordError && <div className="error-message">{confirmPasswordError}</div>} {/* Показуємо помилку */}
+            {confirmPasswordError && <div className="error-message">{confirmPasswordError}</div>}
           </div>
-        )}
 
-        {!isLogin && (
-          <>
-            <div className="form-group">
-              <label htmlFor="firstName">Ім'я</label>
-              <input
-                placeholder="Вкажіть своє ім'я"
-                type="text"
-                name="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                id="firstName"
-              />
-              {firstNameError && <div className="error-message">{firstNameError}</div>} {/* Показуємо помилку */}
-            </div>
+          <div className="form-group">
+            <label htmlFor="firstName">Ім’я</label>
+            <input
+              type="text"
+              id="firstName"
+              placeholder="Вкажіть ваше ім’я"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            {firstNameError && <div className="error-message">{firstNameError}</div>}
+          </div>
 
-            <div className="form-group">
-              <label htmlFor="lastName">Прізвище</label>
-              <input
-                placeholder="Вкажіть своє прізвище"
-                type="text"
-                name="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                id="lastName"
-              />
-              {lastNameError && <div className="error-message">{lastNameError}</div>} {/* Показуємо помилку */}
-            </div>
-          </>
-        )}
+          <div className="form-group">
+            <label htmlFor="lastName">Прізвище</label>
+            <input
+              type="text"
+              id="lastName"
+              placeholder="Вкажіть ваше прізвище"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+            {lastNameError && <div className="error-message">{lastNameError}</div>}
+          </div>
+        </>
+      )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Зачекайте..." : isLogin ? "Увійти" : "Зареєструватися"}
-        </button>
-      </form>
-      {error && <p className="error-message-global">{error}</p>}
+      <button type="submit" disabled={loading}>
+        {loading ? "Зачекайте..." : isLogin ? "Увійти" : "Зареєструватися"}
+      </button>
+    </form>
 
-      <p>
-        {isLogin ? (
-          <>
-            Ще не зареєстровані?{" "}
-            <button onClick={() => setIsLogin(false)}>Реєстрація</button>
-          </>
-        ) : (
-          <>
-            Вже маєте акаунт?{" "}
-            <button onClick={() => setIsLogin(true)}>Увійти</button>
-          </>
-        )}
-      </p>
-    </div>
-  );
+    {error && <p className="error-message-global">{error}</p>}
+
+    {successMessage && (
+      <div
+        className="floating-message success-floating"
+        dangerouslySetInnerHTML={{ __html: successMessage || "" }}
+      ></div>
+    )}
+
+    <p>
+      {isLogin ? (
+        <>
+          Ще не зареєстровані?{" "}
+          <button onClick={() => setIsLogin(false)}>Реєстрація</button>
+        </>
+      ) : (
+        <>
+          Вже маєте акаунт?{" "}
+          <button onClick={() => setIsLogin(true)}>Увійти</button>
+        </>
+      )}
+    </p>
+  </div>
+);
+
 };
 
 export default AuthPage;

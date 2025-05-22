@@ -17,8 +17,8 @@ export const Root = () => {
           <Route index element={<HomePage />} />
           <Route path="home" element={<Navigate to="/" replace />} />
           <Route path="rooms" element={<RoomsPage />} />
-          <Route path="rooms/:id" element={<RoomDetailsPage />} /> {/* Новий маршрут */}
-          <Route path="book/:id" element={<BookingPage />} />  {/* Додаємо маршрут для бронювання */}
+          <Route path="rooms/:id" element={<RoomDetailsPage />} />
+          <Route path="book/:id" element={<BookingPage />} />
           <Route path="manage-rooms" element={<ManageRoomsPage />} />
           <Route path="manage-rooms/:roomId" element={<ManageRoomsPage />} />
           <Route path="login" element={<AuthPage />} />

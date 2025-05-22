@@ -1,13 +1,12 @@
-// Імпортуємо змінні
 @import '../../styles/variables.scss';
 
-// Контейнер для форми
 .auth-form-container {
+  position: relative;
   margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column; // Центруємо все вертикально
+  flex-direction: column;
   height: 100%;
   background-color: $background-color;
 }
@@ -18,13 +17,12 @@
   border-radius: 10px;
   box-shadow: $box-shadow;
   width: 100%;
-  max-width: 500px; // Максимальна ширина форми для великого екрану
+  max-width: 500px;
   display: flex;
-  flex-direction: column;  // Формуємо все в один стовпець
-  gap: 15px;  // Додаємо відступи між елементами форми
+  flex-direction: column;
+  gap: 15px;
 }
 
-// Стилізація заголовка
 h2 {
   text-align: center;
   color: $text-color;
@@ -33,28 +31,28 @@ h2 {
 
 .form-group {
   margin-bottom: 0px;
-}
 
-label {
-  color: $text-color;
-  display: block;
-  margin-bottom: 5px;
-}
+  label {
+    color: $text-color;
+    display: block;
+    margin-bottom: 5px;
+  }
 
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid $border-color;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-}
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid $border-color;
+    border-radius: 5px;
+    margin-bottom: 4px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
 
-input:focus {
-  outline: none;
-  border-color: $primary-color;
-  background-color: #fff;
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      background-color: #fff;
+    }
+  }
 }
 
 button {
@@ -66,47 +64,79 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
 
-button:hover {
-  background-color: $button-hover-background;
-}
+  &:hover {
+    background-color: $button-hover-background;
+  }
 
-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 }
 
 p {
   text-align: center;
-  margin-top: 40px;  // Відступ перед текстом під формою
+  margin-top: 40px;
+
+  button {
+    margin-top: 10px;
+    background-color: $button-background;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+
+    &:hover {
+      background-color: $button-hover-background;
+    }
+  }
 }
 
-p button {
-  margin-top: 10px;
-  background-color: $button-background;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-p button:hover {
-  background-color: $button-hover-background;
-}
-
-// Стилізація для повідомлення про помилки
 .error-message {
-  color: $red-color;
-  margin-top: 5px;
-  padding: 8px;
-  border-radius: 4px;
-  animation: fadeIn 0.5s ease-out;
-  margin-bottom: 10px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #842029; /* темно-червоний */
+  background-color: #f8d7da; /* світло-червоне тло */
+  border: 1px solid #f5c6cb; /* м’яка червона обвідка */
+  border-left: 4px solid #dc3545; /* яскрава смужка праворуч */
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 6px 0 10px;
+  text-align: left;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(211, 47, 47, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-// Додаємо анімацію для з'явлення повідомлень
+
+.error-message-global {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #d32f2f;
+  background: #fdecea;
+  border: 1px solid #f5c6cb;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-top: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(211, 47, 47, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+
+  &::before {
+    content: "⚠️";
+    font-size: 16px;
+  }
+}
+
+
+
+
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -116,7 +146,6 @@ p button:hover {
   }
 }
 
-// Для мобільних пристроїв
 @media (max-width: 768px) {
   .auth-form {
     padding: 20px;
@@ -129,25 +158,36 @@ p button:hover {
   }
 }
 
-// Стилізація для загальних повідомлень про помилки
-.error-message-global {
-  color: $red-color;
-  background-color: rgba(255, 0, 0, 0.1);  // Легкий фон для акценту
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 20px;
-  text-align: center;  // Центруємо повідомлення
-  animation: fadeIn 0.5s ease-out;  // Анімація появи
-  font-weight: bold;
-  border: 1px solid $red-color;  // Рамка для виділення
+@keyframes fadeInFloating {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
-// Анімація для повідомлення
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+.floating-message.success-floating {
+  border: 1px solid #c6edf5;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(230, 249, 240, 0.95);
+  color: rgb(3, 91, 63);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+  animation: fadeInFloating 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  font-size: 16px;
+  z-index: 20;
+  pointer-events: none;
+  max-width: 400px; // 🔽 обмежуємо ширину
+  width: 100%;       // не розтягуємо більше max-width
+  text-align: center;
+  border: 1px solid #b9e9d8;
 }
+

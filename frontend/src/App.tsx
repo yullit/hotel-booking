@@ -6,15 +6,16 @@ import { AuthProvider } from './context/AuthContext'; // Імпортуємо Au
 import './App.scss';
 
 export const App = () => (
-  <AuthProvider>  {/* Обгортаємо весь додаток в AuthProvider */}
+  <AuthProvider>
     <div className="app">
       <Header />
       <main className="main">
         <div className="container">
-          <Outlet /> {/* Це місце для динамічного контенту */}
+          <Outlet />
         </div>
       </main>
       <Footer />
     </div>
   </AuthProvider>
 );
+

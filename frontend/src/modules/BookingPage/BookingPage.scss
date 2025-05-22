@@ -3,62 +3,102 @@
 .booking-page {
   display: flex;
   justify-content: center;
-  padding: 40px 0;
+  padding: 20px 0;
   width: 100%;
   box-sizing: border-box;
 
   .booking-container {
-    max-width: 600px;
+    position: relative;
+
+    max-width: 440px;
     width: 100%;
-    padding: 40px 30px;
+    padding: 24px 20px;
     background-color: #fff;
-    border-radius: 16px;
+    border-radius: 14px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     text-align: center;
 
     h2 {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: -20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $primary-color;
     }
 
+.room-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 20px;
+  color: #222;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, $primary-color, lighten($primary-color, 20%));
+    border-radius: 2px;
+  }
+}
+
+
+
     .total-price {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      margin-top: 30px;
+      color: #444;
     }
 
     .payment-form {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 12px;
 
       label {
         text-align: left;
         font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 4px;
+        font-size: 13px;
+        margin-bottom: 2px;
+        color: #333;
       }
 
       .card-element-wrapper {
-        padding: 12px 14px;
+        padding: 10px 12px;
         border: 1px solid #ccc;
         border-radius: 8px;
         background-color: #f9f9f9;
-        margin-bottom: 20px;
+        margin-bottom: 4px;
+        transition: border-color 0.3s;
+
+        &:focus-within {
+          border-color: $primary-color;
+        }
       }
 
       .card-error {
-        color: red;
-        font-size: 14px;
-        font-weight: 500;
-        margin-top: -10px;
-        margin-bottom: 20px;
+        background-color: #f8d7da;
+        color: #842029;
+        font-size: 13px;
+        padding: 8px 10px;
+        border-left: 4px solid #dc3545;
+        border-radius: 6px;
+        margin: -2px 0 10px;
         text-align: left;
+        font-weight: 500;
       }
 
       button {
-        padding: 12px 20px;
+        padding: 10px 16px;
+        font-size: 14px;
         border: none;
         border-radius: 8px;
         background-color: $primary-color;
@@ -77,24 +117,25 @@
         }
       }
     }
-
-    .success-message {
-      margin-top: 20px;
-      color: green;
-      font-weight: 600;
-    }
   }
 
   @media (max-width: 480px) {
     .booking-container {
-      padding: 30px 20px;
+      padding: 20px 16px;
 
       h2 {
-        font-size: 20px;
+        font-size: 16px;
+        margin-bottom: 2px;
+      }
+
+      .room-name {
+        font-size: 15px;
+        margin-bottom: 6px;
       }
 
       .total-price {
-        font-size: 14px;
+        font-size: 13px;
+        margin-bottom: 14px;
       }
 
       button {
@@ -103,3 +144,26 @@
     }
   }
 }
+
+.floating-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(230, 249, 240, 0.95);
+  color: rgb(3, 91, 63);
+  font-weight: 600;
+  padding: 16px 28px;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  z-index: 20;
+  pointer-events: none;
+  width: 95%;           // ширше повідомлення
+  max-width: 520px;     // не розтягується надто
+  text-align: center;
+  line-height: 1.5;
+  border: 1px solid #b9e9d8;
+}
+
